@@ -23,6 +23,7 @@
 #      (**): If the data have more than two results of statistical
 #            tests, the process is applied for the each headers.
 
+#'
 #' Coloring the signigicant variables and corresponding p values in statistical tests tables on a EXCEL sheet
 #' @encoding UTF-8
 #'
@@ -51,7 +52,7 @@
 #'
 #' @export
 #'
-excelColor <- function(dataName, fileName, level = 0.05, pValue = c("Pr(>|z|)", "Pr(>|t|)", "p-value"), significanceColor = "#FFFF00", headerColor = "#92D050", fontSize = 11, fontName = enc2native("\u6e38\u30b4\u30b7\u30c3\u30af"), fontColor = "#000000",  intercept = FALSE, adj = TRUE, fileEncoding = "CP932") {
+excelColor <- function(dataName, fileName, level = 0.05, pValue = c("Pr(>|z|)", "Pr(>|t|)", "p-value"), significanceColor = "#FFFF00", headerColor = "#92D050", fontSize = 11, fontName = "Yu Gothic", fontColor = "#000000",  intercept = FALSE, adj = TRUE, fileEncoding = "CP932") {
   options(warn = -1)
   if (is.na(dataName)) {
     stop("There is no data-name")
@@ -307,7 +308,7 @@ excelColor <- function(dataName, fileName, level = 0.05, pValue = c("Pr(>|z|)", 
 #'
 #' @export
 #'
-excelHeadColor <- function(dataName, fileName, header, headerColor = "#92D050", fontSize = 11, fontName = enc2native("\u6e38\u30b4\u30b7\u30c3\u30af"), fontColor = "#000000", adj = TRUE, fileEncoding = "CP932") {
+excelHeadColor <- function(dataName, fileName, header, headerColor = "#92D050", fontSize = 11, fontName = "Yu Gothic", fontColor = "#000000", adj = TRUE, fileEncoding = "CP932") {
   options(warn = -1)
   if (is.na(dataName)) {
     stop("There is no data-name")

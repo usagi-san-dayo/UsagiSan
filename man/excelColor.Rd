@@ -13,7 +13,7 @@ excelColor(
   significanceColor = "#FFFF00",
   headerColor = "#92D050",
   fontSize = 11,
-  fontName = enc2native("游ゴシック"),
+  fontName = "Yu Gothic",
   fontColor = "#000000",
   intercept = FALSE,
   adj = TRUE,
