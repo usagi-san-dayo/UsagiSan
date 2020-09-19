@@ -3,7 +3,7 @@
 \encoding{UTF-8}
 \name{excelColor}
 \alias{excelColor}
-\title{Coloring the signigicant variables and corresponding p values in statistical tests tables on a EXCEL sheet}
+\title{Coloring the signigicant variables and corresponding p values in statistical tests tables on a EXCEL sheet.}
 \usage{
 excelColor(
   dataName,
@@ -21,30 +21,30 @@ excelColor(
 )
 }
 \arguments{
-\item{dataName}{The name of a csv-file you want to edit with coloring}
+\item{dataName}{The name of a csv-file you want to edit with coloring.}
 
-\item{fileName}{The name of a Excel-file you want to save as}
+\item{fileName}{The name of a Excel-file you want to save as.}
 
-\item{level}{The significance level applied in coloring significant variables and p values}
+\item{level}{The significance level applied in coloring significant variables and p values.}
 
-\item{pValue}{The character object which indicates the column name in each stitistical test tables}
+\item{pValue}{The character object which indicates the column name in each stitistical test tables.}
 
-\item{significanceColor}{The fore-ground-color of the significant variables}
+\item{significanceColor}{The fore-ground-color of the significant variables.}
 
-\item{headerColor}{The fore-ground-color of the headers of a data-frame}
+\item{headerColor}{The fore-ground-color of the headers of a data-frame.}
 
-\item{fontSize}{Font-size}
+\item{fontSize}{Font-size.}
 
-\item{fontName}{Font-name}
+\item{fontName}{Font-name.}
 
-\item{fontColor}{The color of fonts}
+\item{fontColor}{The color of fonts.}
 
-\item{intercept}{Allows you to color significant intercept variable with the fontColor}
+\item{intercept}{Allows you to color significant intercept variable with the fontColor.}
 
-\item{adj}{Allows you yo adjust shifted statistical test tables}
+\item{adj}{Allows you yo adjust shifted statistical test tables.}
 
-\item{fileEncoding}{File-encoding}
+\item{fileEncoding}{File-encoding.}
 }
 \description{
-Coloring the signigicant variables and corresponding p values in statistical tests tables on a EXCEL sheet
+Coloring the signigicant variables and corresponding p values in statistical tests tables on a EXCEL sheet.
 }

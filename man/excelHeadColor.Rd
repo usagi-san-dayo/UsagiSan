@@ -18,23 +18,23 @@ excelHeadColor(
 )
 }
 \arguments{
-\item{dataName}{The name of a csv-file you want to edit with coloring}
+\item{dataName}{The name of a csv-file you want to edit with coloring.}
 
-\item{fileName}{The name of a Excel-file you want to save as}
+\item{fileName}{The name of a Excel-file you want to save as.}
 
-\item{header}{The character object included in each headers of tables}
+\item{header}{The character object included in each headers of tables.}
 
-\item{headerColor}{The fore-ground-color of the headers of a data-frame}
+\item{headerColor}{The fore-ground-color of the headers of a data-frame.}
 
-\item{fontSize}{Font-size}
+\item{fontSize}{Font-size.}
 
-\item{fontName}{Font-name}
+\item{fontName}{Font-name.}
 
-\item{fontColor}{The color of fonts}
+\item{fontColor}{The color of fonts.}
 
-\item{adj}{Allows you yo adjust shifted statistical test tables}
+\item{adj}{Allows you yo adjust shifted statistical test tables.}
 
-\item{fileEncoding}{File-encoding}
+\item{fileEncoding}{File-encoding.}
 }
 \description{
 Coloring headers of tables on a EXCEL sheet

@@ -15,17 +15,17 @@ mkDirectries(
 )
 }
 \arguments{
-\item{parentDirectryName}{The name of a parent-directry containing organize datas-files, script-files and result-files}
+\item{parentDirectryName}{The name of a parent-directry containing organize datas-files, script-files and result-files.}
 
-\item{dataDirectryName}{The name of a directry to organize data-files}
+\item{dataDirectryName}{The name of a directry to organize data-files.}
 
-\item{programmingDirectryName}{The name of a directry to organize script-files}
+\item{programmingDirectryName}{The name of a directry to organize script-files.}
 
-\item{resultDirectryName}{The name of a directry to organize result-files}
+\item{resultDirectryName}{The name of a directry to organize result-files.}
 
-\item{updateTime}{The time used to divide data-filese into two directries, one is for datas and the other is for results}
+\item{updateTime}{The time used to divide data-filese into two directries, one is for datas and the other is for results.}
 
-\item{arrange}{Allows you to organize data-files in the form of file extensions}
+\item{arrange}{Allows you to organize data-files in the form of file extensions.}
 }
 \description{
 Making directries to organize three kinds of datas: data-sets,  script-files and result-files
