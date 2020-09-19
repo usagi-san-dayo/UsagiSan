@@ -7,7 +7,7 @@
 \usage{
 dataCleanser(
   dataName,
-  dateFormat = list("/", "-", c("年", "月", "日")),
+  dateFormat = list("/", "-"),
   append = FALSE,
   NumOrFac = 10,
   leastNumOfDate = 10,

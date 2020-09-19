@@ -832,7 +832,7 @@ replacer <- function(data, refData, rowNumber) {
 #'
 #' @importFrom data.table fread
 #' @export
-dataCleanser <- function(dataName, dateFormat = list("/", "-", c("\u5e74", "\u6708", "\u65e5")), append = FALSE, NumOrFac = 10, leastNumOfDate = 10, fileEncoding = "CP932") {
+dataCleanser <- function(dataName, dateFormat = list("/", "-"), append = FALSE, NumOrFac = 10, leastNumOfDate = 10, fileEncoding = "CP932") {
   files <- list.files()
   if (any(files == paste0("dataCleansingForm_", dataName, "_.xlsx")) == FALSE) {
     if (fileEncoding == "UTF-8" | fileEncoding == "Latin-1") {
