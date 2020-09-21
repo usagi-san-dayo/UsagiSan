@@ -591,7 +591,7 @@ mkNumericTable <- function(data, index) {
                          rep("", length(unique(data[is.na(as.numeric(data[, index])), index]))))
   }
   else{
-    numericData <- t(rep("", 8))
+    numericData <- NULL
   }
   options(warn = 0)
   table <- rbind(table, numericData)
