@@ -579,6 +579,7 @@ mkDirectries <- function(parentDirectryName, dataDirectryName="data", programmin
 mkNumericTable <- function(data, index) {
   table <- c(index, rep("", 7))
   table <- rbind(table, c("", "Missing values", "", "Replace the column B with the spesific numbers", "", "Breaks", "", "Labels"))
+  options(warn = -1)
   if (length(unique(data[is.na(as.numeric(data[, index])), index])) > 0) {
     numericData <- cbind(rep("", length(unique(data[is.na(as.numeric(data[, index])), index]))),
                          unique(data[is.na(as.numeric(data[, index])), index]),
@@ -592,8 +593,9 @@ mkNumericTable <- function(data, index) {
   else{
     numericData <- t(rep("", 8))
   }
+  options(warn = 0)
   table <- rbind(table, numericData)
-  table <- rbind(table, rep("", 7))
+  table <- rbind(table, rep("", 8))
   return(table)
 }
 
@@ -621,6 +623,7 @@ dataClassifier <- function(data, index, dateIndex, dateList) {
 
     charData1 <- gsub(dateList[[dateIndex]][2], dateList[[dateIndex]][1],  data[, index])
     charData1 <- gsub(dateList[[dateIndex]][3], dateList[[dateIndex]][1],  data[, index])
+    options(warn = -1)
     charData1 <- as.vector(apply(as.data.frame(strsplit(charData1, dateList[[dateIndex]][1])), 2, function(x) {
       paste0(formatC(as.numeric(x[3]), width = 4, flag = "0"), "-",
              formatC(as.numeric(x[1]), width = 2, flag = "0"), "-",
@@ -628,8 +631,10 @@ dataClassifier <- function(data, index, dateIndex, dateList) {
     }
     )
     )
+    options(warn = 0)
     charData2 <- gsub(dateList[[dateIndex]][2], dateList[[dateIndex]][1], data[, index])
     charData2 <- gsub(dateList[[dateIndex]][3], dateList[[dateIndex]][1], charData2)
+    options(warn = -1)
     charData2 <- as.vector(apply(as.data.frame(strsplit(charData2, dateList[[dateIndex]][1])), 2, function(x) {
       paste0(formatC(as.numeric(x[1]), width = 4, flag = "0"), "-",
              formatC(as.numeric(x[2]), width = 2, flag = "0"), "-",
@@ -637,11 +642,12 @@ dataClassifier <- function(data, index, dateIndex, dateList) {
     }
     )
     )
+    options(warn = 0)
   }
   else {
     form1 <- paste0("%m", dateList[[dateIndex]][1], "%d", dateList[[dateIndex]][1], "%Y")
     form2 <- paste0("%Y", dateList[[dateIndex]][1], "%m", dateList[[dateIndex]][1], "%d")
-
+    options(warn = -1)
     charData1 <- as.vector(apply(as.data.frame(strsplit(as.character(data[, index]), dateList[[dateIndex]][1])), 2, function(x) {
       paste0(formatC(as.numeric(x[3]), width = 4, flag = "0"), "-",
              formatC(as.numeric(x[1]), width = 2, flag = "0"), "-",
@@ -656,6 +662,7 @@ dataClassifier <- function(data, index, dateIndex, dateList) {
     }
     )
     )
+    options(warn = 0)
   }
   return(list(list(form = form1, date = charData1), list(form = form2, date = charData2)))
 }
@@ -1034,3 +1041,4 @@ dataCleanser <- function(dataName, dateFormat = list("/", "-"), append = FALSE, 
     return(data)
   }
 }
+
