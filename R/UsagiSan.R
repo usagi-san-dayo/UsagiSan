@@ -1,7 +1,7 @@
 #' UsagiSan: A package for cleansing dataset and outputting statistical test results with using EXCEL.
 #'
 #' The package UsagiSan provides you a lot of helps to reduce the time on data-clansing and editting the test results. this package contains four function:
-#' excelColor, excelHeadColor, mkDirectries and dataCleanser
+#' excelColor, excelHeadColor, mkDirectories and dataCleanser
 #'
 #' @section excelColor:
 #' The function excelColor helps you to edit the test results with coloring the signigicant variables with specific color.
@@ -9,15 +9,15 @@
 #' @section excelHeadColor:
 #' The function excelHeadColor helps you to add colors on headers of any type of tables including summaty sheets and statistical test tables.
 #'
-#' @section mkDirectries:
-#' The function mkDirectries organizes files in tha working directory.
+#' @section mkDirectories:
+#' The function mkDirectories organizes files in tha working directory.
 #'
 #' @section dataCleanser:
 #' The function dataCleanser helps you to cleans a dataset. This function modifies a dataset  to the form much easier to handle in statistical analysis.
 #'
 #' @seealso \code{\link{excelColor}}
 #' @seealso \code{\link{excelHeadColor}}
-#' @seealso \code{\link{mkDirectries}}
+#' @seealso \code{\link{mkDirectories}}
 #' @seealso \code{\link{dataCleanser}}
 #' @seealso My web site: \url{https://multivariate-statistics.com}
 #'
@@ -489,23 +489,23 @@ excelHeadColor <- function(dataName, fileName, header, headerColor = "#92D050", 
   openxlsx::saveWorkbook(wb, paste0(fileName, ".xlsx"), overwrite = TRUE)
 }
 #'
-#' Making directries to organize three kinds of datas: data-sets,  script-files and result-files
+#' Making directories to organize three kinds of datas: data-sets,  script-files and result-files
 #' @encoding UTF-8
 #'
-#' @param parentDirectryName The name of a parent-directry containing organize datas-files, script-files and result-files.
-#' @param dataDirectryName The name of a directry to organize data-files.
-#' @param programmingDirectryName The name of a directry to organize script-files.
-#' @param resultDirectryName The name of a directry to organize result-files.
-#' @param updateTime The time used to divide data-filese into two directries, one is for datas and the other is for results.
+#' @param parentDirectoryName The name of a parent-directory containing organize datas-files, script-files and result-files.
+#' @param dataDirectoryName The name of a directory to organize data-files.
+#' @param programmingDirectoryName The name of a directory to organize script-files.
+#' @param resultDirectoryName The name of a directory to organize result-files.
+#' @param updateTime The time used to divide data-filese into two directories, one is for datas and the other is for results.
 #' @param arrange Allows you to organize data-files in the form of file extensions.
 #'
 #' @export
 #'
-mkDirectries <- function(parentDirectryName, dataDirectryName="data", programmingDirectryName="program", resultDirectryName="result", updateTime=1, arrange = TRUE) {
-  dir.create(paste0(getwd(), "/", parentDirectryName))
-  dir.create(paste0(getwd(), "/", parentDirectryName, "/", dataDirectryName))
-  dir.create(paste0(getwd(), "/", parentDirectryName, "/", programmingDirectryName))
-  dir.create(paste0(getwd(), "/", parentDirectryName, "/", resultDirectryName))
+mkDirectories <- function(parentDirectoryName, dataDirectoryName="data", programmingDirectoryName="program", resultDirectoryName="result", updateTime=1, arrange = TRUE) {
+  dir.create(paste0(getwd(), "/", parentDirectoryName))
+  dir.create(paste0(getwd(), "/", parentDirectoryName, "/", dataDirectoryName))
+  dir.create(paste0(getwd(), "/", parentDirectoryName, "/", programmingDirectoryName))
+  dir.create(paste0(getwd(), "/", parentDirectoryName, "/", resultDirectoryName))
   files <- list.files()
   R.files <- grep("\\.R$", files)
 
@@ -523,55 +523,55 @@ mkDirectries <- function(parentDirectryName, dataDirectryName="data", programmin
   dataExtension <- fileExtension
 
   for (i in files[- (R.files)]) {
-    if (!is.na(file.info(paste0(getwd(), "/", i))$mtime) &  i != parentDirectryName) {
+    if (!is.na(file.info(paste0(getwd(), "/", i))$mtime) &  i != parentDirectoryName) {
       if (arrange == TRUE) {
         if (as.numeric(as.POSIXct(as.list(file.info(paste0(getwd(), "/", i)))$mtime, format = "%Y-%m-%d  %H:%M:%S", tz = "Japan") - Sys.time(), units = "mins") > (-1) * updateTime * 60) {
           if (is.na(strsplit(i, "\\.")[[1]][2]) & any(is.na(resultExtension))) {
-            dir.create(paste0(getwd(), "/", parentDirectryName, "/", resultDirectryName, "/", "No Extension"))
+            dir.create(paste0(getwd(), "/", parentDirectoryName, "/", resultDirectoryName, "/", "No Extension"))
             resultExtension[is.na(resultExtension)] <- ""
           }
           if (!is.na(any(resultExtension == strsplit(i, "\\.")[[1]][length(strsplit(i, "\\.")[[1]])]))) {
             if (any(resultExtension == strsplit(i, "\\.")[[1]][length(strsplit(i, "\\.")[[1]])])) {
-              dir.create(paste0(getwd(), "/", parentDirectryName, "/", resultDirectryName, "/", strsplit(i, "\\.")[[1]][length(strsplit(i, "\\.")[[1]])]))
+              dir.create(paste0(getwd(), "/", parentDirectoryName, "/", resultDirectoryName, "/", strsplit(i, "\\.")[[1]][length(strsplit(i, "\\.")[[1]])]))
               resultExtension[resultExtension == strsplit(i, "\\.")[[1]][length(strsplit(i, "\\.")[[1]])]] <- ""
             }
           }
           if (is.na(strsplit(i, "\\.")[[1]][2])) {
-            file.copy(paste0(getwd(), "/", i), paste0(getwd(), "/", parentDirectryName, "/", resultDirectryName, "/", "No Extension", "/", i))
+            file.copy(paste0(getwd(), "/", i), paste0(getwd(), "/", parentDirectoryName, "/", resultDirectoryName, "/", "No Extension", "/", i))
           }else {
-            file.copy(paste0(getwd(), "/", i), paste0(getwd(), "/", parentDirectryName, "/", resultDirectryName, "/", strsplit(i, "\\.")[[1]][length(strsplit(i, "\\.")[[1]])], "/", i))
+            file.copy(paste0(getwd(), "/", i), paste0(getwd(), "/", parentDirectoryName, "/", resultDirectoryName, "/", strsplit(i, "\\.")[[1]][length(strsplit(i, "\\.")[[1]])], "/", i))
           }
         }
         else {
           if (is.na(strsplit(i, "\\.")[[1]][2]) & any(is.na(dataExtension))) {
-            dir.create(paste0(getwd(), "/", parentDirectryName, "/", dataDirectryName, "/", "No Extension"))
+            dir.create(paste0(getwd(), "/", parentDirectoryName, "/", dataDirectoryName, "/", "No Extension"))
             dataExtension[is.na(dataExtension)] <- ""
           }
           if (!is.na(any(dataExtension == strsplit(i, "\\.")[[1]][length(strsplit(i, "\\.")[[1]])]))) {
             if (any(dataExtension == strsplit(i, "\\.")[[1]][length(strsplit(i, "\\.")[[1]])])) {
-              dir.create(paste0(getwd(), "/", parentDirectryName, "/", dataDirectryName, "/", strsplit(i, "\\.")[[1]][length(strsplit(i, "\\.")[[1]])]))
+              dir.create(paste0(getwd(), "/", parentDirectoryName, "/", dataDirectoryName, "/", strsplit(i, "\\.")[[1]][length(strsplit(i, "\\.")[[1]])]))
               dataExtension[dataExtension == strsplit(i, "\\.")[[1]][length(strsplit(i, "\\.")[[1]])]] <- ""
             }
           }
           if (is.na(strsplit(i, "\\.")[[1]][2])) {
-            file.copy(paste0(getwd(), "/", i), paste0(getwd(), "/", parentDirectryName, "/", dataDirectryName, "/", "No Extension", "/", i))
+            file.copy(paste0(getwd(), "/", i), paste0(getwd(), "/", parentDirectoryName, "/", dataDirectoryName, "/", "No Extension", "/", i))
           }else {
-            file.copy(paste0(getwd(), "/", i), paste0(getwd(), "/", parentDirectryName, "/", dataDirectryName, "/", strsplit(i, "\\.")[[1]][length(strsplit(i, "\\.")[[1]])], "/", i))
+            file.copy(paste0(getwd(), "/", i), paste0(getwd(), "/", parentDirectoryName, "/", dataDirectoryName, "/", strsplit(i, "\\.")[[1]][length(strsplit(i, "\\.")[[1]])], "/", i))
           }
         }
       }else {
         if (as.numeric(as.POSIXct(as.list(file.info(paste0(getwd(), "/", i)))$mtime, format = "%Y-%m-%d  %H:%M:%S", tz = "Japan") - Sys.time(), units = "mins") > (-1) * updateTime * 60) {
-          file.copy(paste0(getwd(), "/", i), paste0(getwd(), "/", parentDirectryName, "/", resultDirectryName, "/", i))
+          file.copy(paste0(getwd(), "/", i), paste0(getwd(), "/", parentDirectoryName, "/", resultDirectoryName, "/", i))
         }
         else {
-          file.copy(paste0(getwd(), "/", i), paste0(getwd(), "/", parentDirectryName, "/", dataDirectryName, "/", i))
+          file.copy(paste0(getwd(), "/", i), paste0(getwd(), "/", parentDirectoryName, "/", dataDirectoryName, "/", i))
         }
       }
     }
   }
 
   for (i in files[R.files]) {
-    file.copy(paste0(getwd(), "/", i), paste0(getwd(), "/", parentDirectryName, "/", programmingDirectryName, "/", i))
+    file.copy(paste0(getwd(), "/", i), paste0(getwd(), "/", parentDirectoryName, "/", programmingDirectoryName, "/", i))
   }
 }
 

@@ -6,7 +6,7 @@
 \title{UsagiSan: A package for cleansing dataset and outputting statistical test results with using EXCEL.}
 \description{
 The package UsagiSan provides you a lot of helps to reduce the time on data-clansing and editting the test results. this package contains four function:
-excelColor, excelHeadColor, mkDirectries and dataCleanser
+excelColor, excelHeadColor, mkDirectories and dataCleanser
 }
 \section{excelColor}{
 
@@ -18,9 +18,9 @@ The function excelColor helps you to edit the test results with coloring the sig
 The function excelHeadColor helps you to add colors on headers of any type of tables including summaty sheets and statistical test tables.
 }
 
-\section{mkDirectries}{
+\section{mkDirectories}{
 
-The function mkDirectries organizes files in tha working directory.
+The function mkDirectories organizes files in tha working directory.
 }
 
 \section{dataCleanser}{
@@ -33,7 +33,7 @@ The function dataCleanser helps you to cleans a dataset. This function modifies 
 
 \code{\link{excelHeadColor}}
 
-\code{\link{mkDirectries}}
+\code{\link{mkDirectories}}
 
 \code{\link{dataCleanser}}
 

@@ -3,7 +3,7 @@
 export(dataCleanser)
 export(excelColor)
 export(excelHeadColor)
-export(mkDirectries)
+export(mkDirectories)
 importFrom(data.table,fread)
 importFrom(openxlsx,addStyle)
 importFrom(openxlsx,addWorksheet)
