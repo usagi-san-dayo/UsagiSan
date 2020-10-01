@@ -50,6 +50,109 @@ NULL
 #      (**): If the data have more than two results of statistical
 #            tests, the process is applied for the each headers.
 
+initialize <- function(data, pValue, header, mode) {
+  if (mode != "header") {
+    tmp <- apply(data, 1, function(x) {
+      bar <- rep(FALSE, length(x))
+      for (i in seq_len(length(pValue))) {
+        bar <- bar | x == pValue[i]
+      }
+      x[bar]
+    }
+    )
+    bar <- rep(FALSE, length(tmp))
+    for (i in seq_len(length(pValue))) {
+      bar <- bar | tmp == pValue[i]
+    }
+
+    tmp2 <- data[as.numeric(rownames(data[bar, ])), ]
+
+    tmp_footer <- apply(data, 1, function(x) {
+      all(x == "")
+    }
+    )
+    green_header <- as.numeric(rownames(data[bar, ]))
+    footer <- as.numeric(rownames(data[tmp_footer, ]))
+    }
+    else{
+    tmp <- apply(data, 1, function(x) {
+      x[header == x]
+    }
+    )
+    tmp2 <- NULL
+    tmp_footer <- apply(data, 1, function(x) {
+      all(x == "")
+    }
+    )
+    green_header <- as.numeric(rownames(data[tmp == header, ]))
+    footer <- as.numeric(rownames(data[tmp_footer, ]))
+  }
+
+  return(list(tmp = tmp, tmp2 = tmp2, gr_header = green_header, footer = footer))
+}
+
+getPotision_sigVar_Intercpt_rLim <- function(green_header, data, pValue, tmp2, col_count, col_intercept, table_rightLim) {
+  for (j in seq_len(length(green_header))) {
+    for (k in seq_len(ncol(data))) {
+      for (l in seq_len(length(pValue))) {
+        if (tmp2[j, k] == pValue[l]) {
+          col_count[j] <- k
+        }
+      }
+    }
+  }
+  for (j in seq_len(length(green_header))) {
+    for (k in seq_len(length(data[green_header[j], ]))) {
+      if (data[green_header[j], k] == "" & data[green_header[j] + 1, k] != "") {
+        col_intercept[j] <- k
+      }
+    }
+  }
+  for (j in seq_len(length(green_header))) {
+    for (k in setdiff(seq_len(length(data[green_header[j], ])), seq_len((col_intercept[j])))) {
+      if (data[green_header[j], k] == "") {
+        table_rightLim[j] <- (k - 1)
+        break
+      }
+      else if (k == ncol(data)) {
+        table_rightLim[j] <- k
+      }
+    }
+  }
+  return(list(count = col_count, intercept = col_intercept, rightLim = table_rightLim))
+}
+
+
+removeNA <- function(factor_row, adj) {
+  if (adj == TRUE) {
+    for (i in seq_len(length(factor_row))) {
+      if (!(is.integer(factor_row[[i]]) & length(factor_row[[i]]) == 0L)) {
+        options(warn = -1)
+        if (all(is.na(factor_row[[i]]))) {
+          factor_row[[i]] <- integer(0)
+        }
+        options(warn = 0)
+      }
+      if (any(is.na(factor_row[[i]]))) {
+        factor_row[[i]] <- as.vector(stats::na.omit(factor_row[[i]]))
+      }
+    }
+  }
+  else {
+    for (i in seq_len(length(factor_row))) {
+      if (!(is.integer(factor_row[i]) & length(factor_row[i]) == 0L)) {
+        options(warn = -1)
+        if (is.na(factor_row[i])) {
+          factor_row[i] <- integer(0)
+        }
+        options(warn = 0)
+      }
+    }
+  }
+  return(factor_row)
+}
+
+
 #'
 #' Coloring the signigicant variables and corresponding p values in statistical tests tables on a EXCEL sheet.
 #' @encoding UTF-8
@@ -99,85 +202,30 @@ excelColor <- function(dataName, fileName, level = 0.05, pValue = c("Pr(>|z|)", 
   openxlsx::writeData(wb, sheet = "Sheet 1", x = data, colNames = F, withFilter = F)
   openxlsx::modifyBaseFont(wb, fontSize = fontSize, fontColour = fontColor, fontName = fontName)
 
-  tmp <- apply(data, 1, function(x) {
-    bar <- rep(FALSE, length(x))
-    for (i in seq_len(length(pValue))) {
-      bar <- bar | x == pValue[i]
-    }
-    x[bar]
-  }
-  )
-  bar <- rep(FALSE, length(tmp))
-  for (i in seq_len(length(pValue))) {
-    bar <- bar | tmp == pValue[i]
-  }
-
-  tmp2 <- data[as.numeric(rownames(data[bar, ])), ]
-
-  tmp_footer <- apply(data, 1, function(x) {
-    all(x == "")
-    }
-  )
-  green_header <- as.numeric(rownames(data[bar, ]))
-  footer <- as.numeric(rownames(data[tmp_footer, ]))
-
+  init <- initialize(data, pValue, mode = "test")
+  tmp <- init$tmp
+  tmp2 <- init$tmp2
+  green_header <- init$gr_header
+  footer <- init$footer
   col_count <- NULL
   col_intercept <- NULL
   table_rightLim <- NULL
   if (adj == TRUE) {
-    for (j in seq_len(length(green_header))) {
-      for (k in seq_len(ncol(data))) {
-        for (l in seq_len(length(pValue))) {
-          if (tmp2[j, k] == pValue[l]) {
-            col_count[j] <- k
-          }
-        }
-      }
-    }
-    for (j in seq_len(length(green_header))) {
-      for (k in seq_len(length(data[green_header[j], ]))) {
-        if (data[green_header[j], k] == "" & data[green_header[j] + 1, k] != "") {
-          col_intercept[j] <- k
-          }
-      }
-    }
-    for (j in seq_len(length(green_header))) {
-      for (k in setdiff(seq_len(length(data[green_header[j], ])), seq_len((col_intercept[j])))) {
-        if (data[green_header[j], k] == "") {
-          table_rightLim[j] <- (k - 1)
-          break
-        }
-        else if (k == ncol(data)) {
-          table_rightLim[j] <- k
-        }
-      }
-    }
+    cols <- getPotision_sigVar_Intercpt_rLim(green_header, data,
+                                     pValue, tmp2,  col_count,
+                                     col_intercept, table_rightLim)
+    col_count <- cols$count
+    col_intercept <- cols$intercept
+    table_rightLim <- cols$rightLim
+
     #setStyle for headers
     for (i in seq_len(length(green_header))) {
       st <- openxlsx::createStyle(fontName = fontName, fontSize = fontSize, fgFill = headerColor)
       openxlsx::addStyle(wb, "Sheet 1", style = st, cols = col_intercept[i]:table_rightLim[i], rows = green_header[i])
     }
-    count <- 1
+    #count <- 1
     factor_list <- list(NULL)
-    for (i in seq_len(length(green_header))) {
-      if (!is.na(footer[count])) {
-        while (green_header[i] >= (footer[count] - 1) & count != length(footer)) {
-          count <- count + 1
-        }
-        if (count != length(footer)) {
-          factor_list[[i]] <- (green_header[i] + 1):(footer[count] - 1)
-          count <- count + 1
-        }else {
-          if (green_header[i] < footer[count]) {
-            factor_list[[i]] <- (green_header[i] + 1):(footer[count] - 1)
-          }else {
-            factor_list[[i]] <- (green_header[i] + 1):nrow(data)
-          }
-        }
-      }else {
-        factor_list[[i]] <- (green_header[i] + 1):nrow(data)
-      }
-    }
+    factor_list <- mkFactorList(green_header, footer, factor_list, 1, data)
 
     factor_row <- list(NULL)
     for (i in seq_len(length(factor_list))) {
@@ -186,36 +234,10 @@ excelColor <- function(dataName, fileName, level = 0.05, pValue = c("Pr(>|z|)", 
     }
 
     #removing NA
-    for (i in seq_len(length(factor_row))) {
-      if (!(is.integer(factor_row[[i]]) & length(factor_row[[i]]) == 0L)) {
-        options(warn = -1)
-        if (all(is.na(factor_row[[i]]))) {
-          factor_row[[i]] <- integer(0)
-        }
-        options(warn = 0)
-      }
-      if (any(is.na(factor_row[[i]]))) {
-        factor_row[[i]] <- stats::na.omit(factor_row[[i]])[1]
-      }
-    }
+    factor_row <- removeNA(factor_row, adj)
 
     #write data
-    options(warn = -1)
-    for (i in seq_len(length(factor_list))) {
-      bar <- data[factor_list[[i]], ]
-      for (j in seq_len(ncol(data[factor_list[[i]], ]))) {
-        bar[bar[, j] == "", j] <- NA
-        tmp <- data[factor_list[[i]], col_intercept[i] - 1 + j]
-        tmp[tmp == ""] <- NA
-        if (!any((is.na(as.numeric(stats::na.omit(bar[, j])))))) {
-          if (all(as.numeric(stats::na.omit(bar[, j])) == as.character(as.numeric(stats::na.omit(bar[, j]))))) {
-            bar[, j] <- as.numeric(bar[, j])
-          }
-        }
-      }
-      openxlsx::writeData(wb, sheet = "Sheet 1", x = bar, startRow = factor_list[[i]][1], startCol = 1, colNames = F, withFilter = F)
-    }
-    options(warn = 0)
+    writeDatas(factor_list, data, wb, tmp)
 
     #setStyle for significant variables
     st <- openxlsx::createStyle(fontName = fontName, fontSize = fontSize, fgFill = significanceColor)
@@ -248,54 +270,14 @@ excelColor <- function(dataName, fileName, level = 0.05, pValue = c("Pr(>|z|)", 
     options(warn = 0)
 
     #removing NA
-    for (i in seq_len(length(factor_row))) {
-      if (!(is.integer(factor_row[i]) & length(factor_row[i]) == 0L)) {
-        options(warn = -1)
-        if (is.na(factor_row[i])) {
-          factor_row[i] <- integer(0)
-        }
-        options(warn = 0)
-      }
-    }
+    factor_row <- removeNA(factor_row, adj)
 
-
-    count <- 1
+    #count <- 1
     factor_list <- list(NULL)
-    for (i in seq_len(length(green_header))) {
-      if (!is.na(footer[count])) {
-        while (green_header[i] >= (footer[count] - 1) & count != length(footer)) {
-          count <- count + 1
-        }
-        if (count != length(footer)) {
-          factor_list[[i]] <- (green_header[i] + 1):(footer[count] - 1)
-          count <- count + 1
-        }else {
-          if (green_header[i] < footer[count]) {
-            factor_list[[i]] <- (green_header[i] + 1):(footer[count] - 1)
-          }else {
-            factor_list[[i]] <- (green_header[i] + 1):nrow(data)
-          }
-        }
-      }else {
-        factor_list[[i]] <- (green_header[i] + 1):nrow(data)
-      }
-    }
+    factor_list <- mkFactorList(green_header, footer, factor_list, 1, data)
 
     #write data
-    options(warn = -1)
-    for (i in seq_len(length(factor_list))) {
-      bar <- data[factor_list[[i]], ]
-      for (j in seq_len(ncol(data[factor_list[[i]], ]))) {
-        bar[bar[, j] == "", j] <- NA
-        if (!any((is.na(as.numeric(stats::na.omit(bar[, j])))))) {
-          if (all(as.numeric(stats::na.omit(bar[, j])) == as.character(as.numeric(stats::na.omit(bar[, j]))))) {
-            bar[, j] <- as.numeric(bar[, j])
-          }
-        }
-      }
-      openxlsx::writeData(wb, sheet = "Sheet 1", x = bar, startRow = factor_list[[i]][1], startCol = 1, colNames = F, withFilter = F)
-    }
-    options(warn = 0)
+    writeDatas(factor_list, data, wb)
 
     st <- openxlsx::createStyle(fontName = fontName, fontSize = fontSize, fgFill = significanceColor)
     openxlsx::addStyle(wb, "Sheet 1", style = st, cols = col_count[1], rows = factor_row)
@@ -308,6 +290,83 @@ excelColor <- function(dataName, fileName, level = 0.05, pValue = c("Pr(>|z|)", 
   }
 
   openxlsx::saveWorkbook(wb, paste0(fileName, ".xlsx"), overwrite = TRUE)
+}
+
+getPosition_intercpt_rightLim <- function(green_header, data, col_intercept, table_rightLim) {
+  for (j in seq_len(length(green_header))) {
+    for (k in seq_len(length(data[green_header[j], ]))) {
+      if (data[green_header[j], k] == "" & data[green_header[j] + 1, k] != "") {
+        col_intercept[j] <- k
+      }else {
+        if (k < ncol(data)) {
+          if (data[green_header[j], k] == "" & data[green_header[j] + 1, k] == "" & data[green_header[j], k + 1] != "") {
+            col_intercept[j] <- k + 1
+          }
+        }
+      }
+    }
+    if (is.na(col_intercept[j])) {
+      col_intercept[j] <- 1
+    }
+  }
+  for (j in seq_len(length(green_header))) {
+    for (k in setdiff(seq_len(length(data[green_header[j], ])), seq_len((col_intercept[j])))) {
+      if (data[green_header[j], k] == "") {
+        table_rightLim[j] <- (k - 1)
+        break
+      }
+      else if (k == ncol(data)) {
+        table_rightLim[j] <- k
+      }
+    }
+  }
+  return(list(intercept = col_intercept, rightLim = table_rightLim))
+}
+
+mkFactorList <- function(green_header, footer, factor_list, count, data) {
+  for (i in seq_len(length(green_header))) {
+    if (!is.na(footer[count])) {
+      while (green_header[i] >= (footer[count] - 1) & count != length(footer)) {
+        count <- count + 1
+      }
+      if (count != length(footer)) {
+        factor_list[[i]] <- (green_header[i] + 1):(footer[count] - 1)
+        count <- count + 1
+      }else {
+        if (green_header[i] < footer[count]) {
+          factor_list[[i]] <- (green_header[i] + 1):(footer[count] - 1)
+        }else {
+          factor_list[[i]] <- (green_header[i] + 1):nrow(data)
+        }
+      }
+    }else {
+      factor_list[[i]] <- (green_header[i] + 1):nrow(data)
+    }
+  }
+  return(factor_list)
+}
+
+writeDatas <- function(factor_list, data, wb, tmp = NULL) {
+  options(warn = -1)
+  for (i in seq_len(length(factor_list))) {
+    bar <- data[factor_list[[i]], ]
+    for (j in seq_len(ncol(data[factor_list[[i]], ]))) {
+      bar[bar[, j] == "", j] <- NA
+      if (!is.null(tmp)) {
+        tmp <- data[factor_list[[i]], col_intercept[i] - 1 + j]
+        tmp[tmp == ""] <- NA
+      }
+      if (!any((is.na(as.numeric(stats::na.omit(bar[, j])))))) {
+        if (all(as.numeric(stats::na.omit(bar[, j])) == as.character(as.numeric(stats::na.omit(bar[, j]))))) {
+          bar[, j] <- as.numeric(bar[, j])
+        }
+      }
+    }
+    openxlsx::writeData(wb, sheet = "Sheet 1", x = bar, startRow = factor_list[[i]][1], startCol = 1, colNames = F, withFilter = F)
+  }
+  options(warn = 0)
+
+
 }
 #'
 #' Coloring headers of tables on a EXCEL sheet
@@ -355,137 +414,44 @@ excelHeadColor <- function(dataName, fileName, header, headerColor = "#92D050", 
   openxlsx::writeData(wb, sheet = "Sheet 1", x = data, colNames = F, withFilter = F)
   openxlsx::modifyBaseFont(wb, fontSize = fontSize, fontColour = fontColor, fontName = fontName)
 
-  tmp <- apply(data, 1, function(x) {
-    x[header == x]
-    }
-  )
-  tmp_footer <- apply(data, 1, function(x) {
-    all(x == "")
-    }
-  )
-  green_header <- as.numeric(rownames(data[tmp == header, ]))
-  footer <- as.numeric(rownames(data[tmp_footer, ]))
-
+  init <- initialize(data, header = header, mode = "header")
+  tmp <- init$tmp
+  green_header <- init$gr_header
+  footer <- init$footer
   col_intercept <- NA
   table_rightLim <- NULL
 
   if (adj == TRUE) {
-    for (j in seq_len(length(green_header))) {
-      for (k in seq_len(length(data[green_header[j], ]))) {
-        if (data[green_header[j], k] == "" & data[green_header[j] + 1, k] != "") {
-          col_intercept[j] <- k
-        }else {
-          if (k < ncol(data)) {
-            if (data[green_header[j], k] == "" & data[green_header[j] + 1, k] == "" & data[green_header[j], k + 1] != "") {
-              col_intercept[j] <- k + 1
-            }
-          }
-        }
-      }
-      if (is.na(col_intercept[j])) {
-        col_intercept[j] <- 1
-      }
-    }
-    for (j in seq_len(length(green_header))) {
-      for (k in setdiff(seq_len(length(data[green_header[j], ])), seq_len((col_intercept[j])))) {
-        if (data[green_header[j], k] == "") {
-          table_rightLim[j] <- (k - 1)
-          break
-        }
-        else if (k == ncol(data)) {
-          table_rightLim[j] <- k
-        }
-      }
-    }
+    cols <- getPosition_intercpt_rightLim(green_header, data, col_intercept, table_rightLim)
+    col_intercept <- cols$intercept
+    table_rightLim <- cols$rightLim
+
     #setStyle for headers
     for (i in seq_len(length(green_header))) {
       st <- openxlsx::createStyle(fontName = fontName, fontSize = fontSize, fgFill = headerColor)
       openxlsx::addStyle(wb, "Sheet 1", style = st, cols = col_intercept[i]:table_rightLim[i], rows = green_header[i])
     }
 
-    count <- 1
+    #count <- 1
     factor_list <- list(NULL)
-    for (i in seq_len(length(green_header))) {
-      if (!is.na(footer[count])) {
-        while (green_header[i] >= (footer[count] - 1) & count != length(footer)) {
-          count <- count + 1
-        }
-        if (count != length(footer)) {
-          factor_list[[i]] <- (green_header[i] + 1):(footer[count] - 1)
-          count <- count + 1
-        }else {
-          if (green_header[i] < footer[count]) {
-            factor_list[[i]] <- (green_header[i] + 1):(footer[count] - 1)
-          }else {
-            factor_list[[i]] <- (green_header[i] + 1):nrow(data)
-          }
-        }
-      }else {
-        factor_list[[i]] <- (green_header[i] + 1):nrow(data)
-      }
-    }
+    factor_list <- mkFactorList(green_header, footer, factor_list, 1, data)
 
     #write data
-    options(warn = -1)
-    for (i in seq_len(length(factor_list))) {
-      bar <- data[factor_list[[i]], ]
-      for (j in seq_len(ncol(data[factor_list[[i]], ]))) {
-        bar[bar[, j] == "", j] <- NA
-        if (!any((is.na(as.numeric(stats::na.omit(bar[, j])))))) {
-          if (all(as.numeric(stats::na.omit(bar[, j])) == as.character(as.numeric(stats::na.omit(bar[, j]))))) {
-            bar[, j] <- as.numeric(bar[, j])
-          }
-        }
-      }
-      openxlsx::writeData(wb, sheet = "Sheet 1", x = bar, startRow = factor_list[[i]][1], startCol = 1, colNames = F, withFilter = F)
-    }
-    options(warn = 0)
-
-  }else {
+    writeDatas(factor_list, data, wb)
+  }
+  else {
     st <- openxlsx::createStyle(fontName = fontName, fontSize = fontSize, fgFill = headerColor)
     for (k in seq_len(ncol(data))) {
       openxlsx::addStyle(wb, "Sheet 1", style = st, cols = k, rows = green_header)
     }
 
-    count <- 1
+    #count <- 1
     factor_list <- list(NULL)
-    for (i in seq_len(length(green_header))) {
-      if (!is.na(footer[count])) {
-        while (green_header[i] >= (footer[count] - 1) & count != length(footer)) {
-          count <- count + 1
-        }
-        if (count != length(footer)) {
-          factor_list[[i]] <- (green_header[i] + 1):(footer[count] - 1)
-          count <- count + 1
-        }else {
-          if (green_header[i] < footer[count]) {
-            factor_list[[i]] <- (green_header[i] + 1):(footer[count] - 1)
-          }else {
-            factor_list[[i]] <- (green_header[i] + 1):nrow(data)
-          }
-        }
-      }else {
-        factor_list[[i]] <- (green_header[i] + 1):nrow(data)
-      }
-    }
+    factor_list <- mkFactorList(green_header, footer, factor_list, 1, data)
 
     #write data
-    options(warn = -1)
-    for (i in seq_len(length(factor_list))) {
-      bar <- data[factor_list[[i]], ]
-      for (j in seq_len(ncol(data[factor_list[[i]], ]))) {
-        bar[bar[, j] == "", j] <- NA
-        if (!any((is.na(as.numeric(stats::na.omit(bar[, j])))))) {
-          if (all(as.numeric(stats::na.omit(bar[, j])) == as.character(as.numeric(stats::na.omit(bar[, j]))))) {
-            bar[, j] <- as.numeric(bar[, j])
-          }
-        }
-      }
-      openxlsx::writeData(wb, sheet = "Sheet 1", x = bar, startRow = factor_list[[i]][1], startCol = 1, colNames = F, withFilter = F)
-    }
-    options(warn = 0)
+    writeDatas(factor_list, data, wb)
   }
-
   openxlsx::saveWorkbook(wb, paste0(fileName, ".xlsx"), overwrite = TRUE)
 }
 #'
