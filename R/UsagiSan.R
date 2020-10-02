@@ -432,7 +432,6 @@ excelHeadColor <- function(dataName, fileName, header, headerColor = "#92D050", 
       openxlsx::addStyle(wb, "Sheet 1", style = st, cols = col_intercept[i]:table_rightLim[i], rows = green_header[i])
     }
 
-    #count <- 1
     factor_list <- list(NULL)
     factor_list <- mkFactorList(green_header, footer, factor_list, 1, data)
 
@@ -444,8 +443,6 @@ excelHeadColor <- function(dataName, fileName, header, headerColor = "#92D050", 
     for (k in seq_len(ncol(data))) {
       openxlsx::addStyle(wb, "Sheet 1", style = st, cols = k, rows = green_header)
     }
-
-    #count <- 1
     factor_list <- list(NULL)
     factor_list <- mkFactorList(green_header, footer, factor_list, 1, data)
 
