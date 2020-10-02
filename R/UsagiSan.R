@@ -210,6 +210,12 @@ excelColor <- function(dataName, fileName, level = 0.05, pValue = c("Pr(>|z|)", 
   col_count <- NULL
   col_intercept <- NULL
   table_rightLim <- NULL
+
+  options(warn = -1)
+  if (length(tmp) == 0) {
+    stop("There is no such pvalue' colname")
+  }
+  options(warn = 0)
   if (adj == TRUE) {
     cols <- getPotision_sigVar_Intercpt_rLim(green_header, data,
                                      pValue, tmp2,  col_count,
@@ -223,7 +229,7 @@ excelColor <- function(dataName, fileName, level = 0.05, pValue = c("Pr(>|z|)", 
       st <- openxlsx::createStyle(fontName = fontName, fontSize = fontSize, fgFill = headerColor)
       openxlsx::addStyle(wb, "Sheet 1", style = st, cols = col_intercept[i]:table_rightLim[i], rows = green_header[i])
     }
-    #count <- 1
+
     factor_list <- list(NULL)
     factor_list <- mkFactorList(green_header, footer, factor_list, 1, data)
 
@@ -237,7 +243,7 @@ excelColor <- function(dataName, fileName, level = 0.05, pValue = c("Pr(>|z|)", 
     factor_row <- removeNA(factor_row, adj)
 
     #write data
-    writeDatas(factor_list, data, wb, tmp)
+    writeDatas(factor_list, data, wb)
 
     #setStyle for significant variables
     st <- openxlsx::createStyle(fontName = fontName, fontSize = fontSize, fgFill = significanceColor)
@@ -272,7 +278,6 @@ excelColor <- function(dataName, fileName, level = 0.05, pValue = c("Pr(>|z|)", 
     #removing NA
     factor_row <- removeNA(factor_row, adj)
 
-    #count <- 1
     factor_list <- list(NULL)
     factor_list <- mkFactorList(green_header, footer, factor_list, 1, data)
 
@@ -346,16 +351,12 @@ mkFactorList <- function(green_header, footer, factor_list, count, data) {
   return(factor_list)
 }
 
-writeDatas <- function(factor_list, data, wb, tmp = NULL) {
+writeDatas <- function(factor_list, data, wb) {
   options(warn = -1)
   for (i in seq_len(length(factor_list))) {
     bar <- data[factor_list[[i]], ]
     for (j in seq_len(ncol(data[factor_list[[i]], ]))) {
       bar[bar[, j] == "", j] <- NA
-      if (!is.null(tmp)) {
-        tmp <- data[factor_list[[i]], col_intercept[i] - 1 + j]
-        tmp[tmp == ""] <- NA
-      }
       if (!any((is.na(as.numeric(stats::na.omit(bar[, j])))))) {
         if (all(as.numeric(stats::na.omit(bar[, j])) == as.character(as.numeric(stats::na.omit(bar[, j]))))) {
           bar[, j] <- as.numeric(bar[, j])
@@ -415,7 +416,6 @@ excelHeadColor <- function(dataName, fileName, header, headerColor = "#92D050", 
   openxlsx::modifyBaseFont(wb, fontSize = fontSize, fontColour = fontColor, fontName = fontName)
 
   init <- initialize(data, header = header, mode = "header")
-  tmp <- init$tmp
   green_header <- init$gr_header
   footer <- init$footer
   col_intercept <- NA
@@ -451,24 +451,49 @@ excelHeadColor <- function(dataName, fileName, header, headerColor = "#92D050", 
   }
   openxlsx::saveWorkbook(wb, paste0(fileName, ".xlsx"), overwrite = TRUE)
 }
+
+mkDirFor_result_data <- function(parentDirName, childDirName, extension, file) {
+  if (is.na(strsplit(file, "\\.")[[1]][2]) & any(is.na(extension))) {
+    dir.create(paste0(getwd(), "/", parentDirName, "/", childDirName, "/", "No Extension"))
+    extension[is.na(extension)] <- ""
+  }
+  if (!is.na(any(extension == strsplit(file, "\\.")[[1]][length(strsplit(file, "\\.")[[1]])]))) {
+    if (any(extension == strsplit(file, "\\.")[[1]][length(strsplit(file, "\\.")[[1]])])) {
+      options(warn = -1)
+      dir.create(paste0(getwd(), "/", parentDirName, "/", childDirName, "/", strsplit(file, "\\.")[[1]][length(strsplit(file, "\\.")[[1]])]))
+      options(warn = 0)
+      extension[extension == strsplit(file, "\\.")[[1]][length(strsplit(file, "\\.")[[1]])]] <- ""
+    }
+  }
+  if (is.na(strsplit(file, "\\.")[[1]][2])) {
+    file.copy(paste0(getwd(), "/", file), paste0(getwd(), "/", parentDirName, "/", childDirName, "/", "No Extension", "/", file))
+  }else {
+    file.copy(paste0(getwd(), "/", file), paste0(getwd(), "/", parentDirName, "/", childDirName, "/", strsplit(file, "\\.")[[1]][length(strsplit(file, "\\.")[[1]])], "/", file))
+  }
+  return(extension)
+}
+
+mkDir_noArrange_esult_data <- function(parentDirName, childDirName, file) {
+  file.copy(paste0(getwd(), "/", file), paste0(getwd(), "/", parentDirName, "/", childDirName, "/", file))
+}
 #'
 #' Making directories to organize three kinds of datas: data-sets,  script-files and result-files
 #' @encoding UTF-8
 #'
-#' @param parentDirectoryName The name of a parent-directory containing organize datas-files, script-files and result-files.
-#' @param dataDirectoryName The name of a directory to organize data-files.
-#' @param programmingDirectoryName The name of a directory to organize script-files.
-#' @param resultDirectoryName The name of a directory to organize result-files.
+#' @param parentDirName The name of a parent-directory containing organize datas-files, script-files and result-files.
+#' @param dataDirName The name of a directory to organize data-files.
+#' @param programmingDirName The name of a directory to organize script-files.
+#' @param resultDirName The name of a directory to organize result-files.
 #' @param updateTime The time used to divide data-filese into two directories, one is for datas and the other is for results.
 #' @param arrange Allows you to organize data-files in the form of file extensions.
 #'
 #' @export
 #'
-mkDirectories <- function(parentDirectoryName, dataDirectoryName="data", programmingDirectoryName="program", resultDirectoryName="result", updateTime=1, arrange = TRUE) {
-  dir.create(paste0(getwd(), "/", parentDirectoryName))
-  dir.create(paste0(getwd(), "/", parentDirectoryName, "/", dataDirectoryName))
-  dir.create(paste0(getwd(), "/", parentDirectoryName, "/", programmingDirectoryName))
-  dir.create(paste0(getwd(), "/", parentDirectoryName, "/", resultDirectoryName))
+mkDirectories <- function(parentDirName, dataDirName="data", programmingDirName="program", resultDirName="result", updateTime=1, arrange = TRUE) {
+  dir.create(paste0(getwd(), "/", parentDirName))
+  dir.create(paste0(getwd(), "/", parentDirName, "/", dataDirName))
+  dir.create(paste0(getwd(), "/", parentDirName, "/", programmingDirName))
+  dir.create(paste0(getwd(), "/", parentDirName, "/", resultDirName))
   files <- list.files()
   R.files <- grep("\\.R$", files)
 
@@ -486,58 +511,30 @@ mkDirectories <- function(parentDirectoryName, dataDirectoryName="data", program
   dataExtension <- fileExtension
 
   for (i in files[- (R.files)]) {
-    if (!is.na(file.info(paste0(getwd(), "/", i))$mtime) &  i != parentDirectoryName) {
+    if (!is.na(file.info(paste0(getwd(), "/", i))$mtime) &  i != parentDirName) {
+      get_resultOrData <- as.numeric(as.POSIXct(as.list(file.info(paste0(getwd(), "/", i)))$mtime, format = "%Y-%m-%d  %H:%M:%S", tz = "Japan") - Sys.time(), units = "mins") > (-1) * updateTime * 60
       if (arrange == TRUE) {
-        if (as.numeric(as.POSIXct(as.list(file.info(paste0(getwd(), "/", i)))$mtime, format = "%Y-%m-%d  %H:%M:%S", tz = "Japan") - Sys.time(), units = "mins") > (-1) * updateTime * 60) {
-          if (is.na(strsplit(i, "\\.")[[1]][2]) & any(is.na(resultExtension))) {
-            dir.create(paste0(getwd(), "/", parentDirectoryName, "/", resultDirectoryName, "/", "No Extension"))
-            resultExtension[is.na(resultExtension)] <- ""
-          }
-          if (!is.na(any(resultExtension == strsplit(i, "\\.")[[1]][length(strsplit(i, "\\.")[[1]])]))) {
-            if (any(resultExtension == strsplit(i, "\\.")[[1]][length(strsplit(i, "\\.")[[1]])])) {
-              dir.create(paste0(getwd(), "/", parentDirectoryName, "/", resultDirectoryName, "/", strsplit(i, "\\.")[[1]][length(strsplit(i, "\\.")[[1]])]))
-              resultExtension[resultExtension == strsplit(i, "\\.")[[1]][length(strsplit(i, "\\.")[[1]])]] <- ""
-            }
-          }
-          if (is.na(strsplit(i, "\\.")[[1]][2])) {
-            file.copy(paste0(getwd(), "/", i), paste0(getwd(), "/", parentDirectoryName, "/", resultDirectoryName, "/", "No Extension", "/", i))
-          }else {
-            file.copy(paste0(getwd(), "/", i), paste0(getwd(), "/", parentDirectoryName, "/", resultDirectoryName, "/", strsplit(i, "\\.")[[1]][length(strsplit(i, "\\.")[[1]])], "/", i))
-          }
+        if (get_resultOrData) {
+          resultExtension <- mkDirFor_result_data(parentDirName, resultDirName, resultExtension, i)
         }
         else {
-          if (is.na(strsplit(i, "\\.")[[1]][2]) & any(is.na(dataExtension))) {
-            dir.create(paste0(getwd(), "/", parentDirectoryName, "/", dataDirectoryName, "/", "No Extension"))
-            dataExtension[is.na(dataExtension)] <- ""
-          }
-          if (!is.na(any(dataExtension == strsplit(i, "\\.")[[1]][length(strsplit(i, "\\.")[[1]])]))) {
-            if (any(dataExtension == strsplit(i, "\\.")[[1]][length(strsplit(i, "\\.")[[1]])])) {
-              dir.create(paste0(getwd(), "/", parentDirectoryName, "/", dataDirectoryName, "/", strsplit(i, "\\.")[[1]][length(strsplit(i, "\\.")[[1]])]))
-              dataExtension[dataExtension == strsplit(i, "\\.")[[1]][length(strsplit(i, "\\.")[[1]])]] <- ""
-            }
-          }
-          if (is.na(strsplit(i, "\\.")[[1]][2])) {
-            file.copy(paste0(getwd(), "/", i), paste0(getwd(), "/", parentDirectoryName, "/", dataDirectoryName, "/", "No Extension", "/", i))
-          }else {
-            file.copy(paste0(getwd(), "/", i), paste0(getwd(), "/", parentDirectoryName, "/", dataDirectoryName, "/", strsplit(i, "\\.")[[1]][length(strsplit(i, "\\.")[[1]])], "/", i))
-          }
+          dataExtension <- mkDirFor_result_data(parentDirName, dataDirName, dataExtension, i)
         }
-      }else {
-        if (as.numeric(as.POSIXct(as.list(file.info(paste0(getwd(), "/", i)))$mtime, format = "%Y-%m-%d  %H:%M:%S", tz = "Japan") - Sys.time(), units = "mins") > (-1) * updateTime * 60) {
-          file.copy(paste0(getwd(), "/", i), paste0(getwd(), "/", parentDirectoryName, "/", resultDirectoryName, "/", i))
+      }
+      else {
+        if (get_resultOrData) {
+          mkDir_noArrange_esult_data(parentDirName, resultDirName, i)
         }
         else {
-          file.copy(paste0(getwd(), "/", i), paste0(getwd(), "/", parentDirectoryName, "/", dataDirectoryName, "/", i))
+          mkDir_noArrange_esult_data(parentDirName, dataDirName, i)
         }
       }
     }
   }
-
   for (i in files[R.files]) {
-    file.copy(paste0(getwd(), "/", i), paste0(getwd(), "/", parentDirectoryName, "/", programmingDirectoryName, "/", i))
+    file.copy(paste0(getwd(), "/", i), paste0(getwd(), "/", parentDirName, "/", programmingDirName, "/", i))
   }
 }
-
 
 mkNumericTable <- function(data, index) {
   table <- c(index, rep("", 7))

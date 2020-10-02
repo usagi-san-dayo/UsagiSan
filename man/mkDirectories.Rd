@@ -6,22 +6,22 @@
 \title{Making directories to organize three kinds of datas: data-sets,  script-files and result-files}
 \usage{
 mkDirectories(
-  parentDirectoryName,
-  dataDirectoryName = "data",
-  programmingDirectoryName = "program",
-  resultDirectoryName = "result",
+  parentDirName,
+  dataDirName = "data",
+  programmingDirName = "program",
+  resultDirName = "result",
   updateTime = 1,
   arrange = TRUE
 )
 }
 \arguments{
-\item{parentDirectoryName}{The name of a parent-directory containing organize datas-files, script-files and result-files.}
+\item{parentDirName}{The name of a parent-directory containing organize datas-files, script-files and result-files.}
 
-\item{dataDirectoryName}{The name of a directory to organize data-files.}
+\item{dataDirName}{The name of a directory to organize data-files.}
 
-\item{programmingDirectoryName}{The name of a directory to organize script-files.}
+\item{programmingDirName}{The name of a directory to organize script-files.}
 
-\item{resultDirectoryName}{The name of a directory to organize result-files.}
+\item{resultDirName}{The name of a directory to organize result-files.}
 
 \item{updateTime}{The time used to divide data-filese into two directories, one is for datas and the other is for results.}
 
