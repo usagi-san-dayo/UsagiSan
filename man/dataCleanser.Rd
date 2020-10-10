@@ -9,7 +9,7 @@ dataCleanser(
   dataName,
   dateFormat = list("/", "-"),
   append = FALSE,
-  NumOrFac = 10,
+  numOrFac = 10,
   leastNumOfDate = 10,
   fileEncoding = "CP932"
 )
@@ -21,7 +21,7 @@ dataCleanser(
 
 \item{append}{Allows you to append the new datas generated from dataCleansingForm__.xlsx.}
 
-\item{NumOrFac}{The criteria for classifying whether the column data is numeric or factor. If the number of levels are greater than the ratio (nrow(data)/NumOrFac), then it will be assiged to numeric group.}
+\item{numOrFac}{The criteria for classifying whether the column data is numeric or factor. If the number of levels are greater than the ratio (nrow(data)/numOrFac), then it will be assiged to numeric group.}
 
 \item{leastNumOfDate}{The criteria for classifying whether the column data is Date of numeric. if the data contains the dateFormat you have chosen and the number of data containing such formats is greater than this value, leastNumOfDate, then the data will be assigned to Date group.}
 
