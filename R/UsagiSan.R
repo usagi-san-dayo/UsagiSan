@@ -856,7 +856,7 @@ writeTablesOnExcel <- function(tableNumeric, tableFactor, tableTime, dataName) {
 
 mkTableNum_Fac <- function(data, index, numOrFac, tableNumeric, tableFactor) {
   options(warn = -1)
-  charEqualNum <- (as.numeric(data[, index]) == data[, index])
+  charEqualNum <-  as.character(as.numeric(data[, index])) ==as.numeric(data[, index]) #todo check
   options(warn = 0)
   if (length(na.omit(data[charEqualNum == FALSE, index])) == 0 &  length(na.omit(data[charEqualNum == TRUE, index])) > 0 & nlevels(as.factor(data[, index])) > nrow(data) / numOrFac) {
     tableNumeric <- rbind(tableNumeric, mkNumericTable(data, index))
