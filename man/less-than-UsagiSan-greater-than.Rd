@@ -28,6 +28,11 @@ The function mkDirectories organizes files in tha working directory.
 The function dataCleanser helps you to cleans a dataset. This function modifies a dataset  to the form much easier to handle in statistical analysis.
 }
 
+\section{dataCleansing}{
+
+The class dataCleansing have several methods to operate dataCleanser. This provides how to classify a vector object into numeric, factor or Date type object.
+}
+
 \seealso{
 \code{\link{excelColor}}
 
@@ -36,6 +41,8 @@ The function dataCleanser helps you to cleans a dataset. This function modifies 
 \code{\link{mkDirectories}}
 
 \code{\link{dataCleanser}}
+
+\code{\linkS4class{dataCleansing}}
 
 My web site: \url{https://multivariate-statistics.com}
 }

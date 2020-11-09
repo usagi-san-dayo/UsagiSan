@@ -1,6 +1,6 @@
 Package: UsagiSan
 Title: What the Package Does (One Line, Title Case)
-Version: 0.0.1.000
+Version: 0.1.1
 Authors@R: 
     person(given = "First",
            family = "Last",
@@ -17,4 +17,5 @@ Imports:
     openxlsx,
     stats,
     utils,
-    data.table
+    data.table,
+    methods
