@@ -7,7 +7,6 @@
 \usage{
 dataCleanser(
   dataName,
-  dateFormat = list("/", "-"),
   append = FALSE,
   numOrFac = 10,
   leastNumOfDate = 10,
@@ -16,8 +15,6 @@ dataCleanser(
 }
 \arguments{
 \item{dataName}{The file-name of a csv file that will be cleansed.}
-
-\item{dateFormat}{The format assigned to Date group.}
 
 \item{append}{Allows you to append the new datas generated from dataCleansingForm__.xlsx.}
 
