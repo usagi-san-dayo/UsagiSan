@@ -295,7 +295,7 @@ excelColor <- function(dataName, fileName, level = 0.05, pValue = c("Pr(>|z|)", 
     if (intercept == TRUE) {
       openxlsx::addStyle(wb, "Sheet 1", style = st, cols = 1, rows = factor_row)
     }else {
-      openxlsx::addStyle(wb, "Sheet 1", style = st, cols = 1, rows = setdiff(factor_row, green_header[i] + 1))
+      openxlsx::addStyle(wb, "Sheet 1", style = st, cols = 1, rows = setdiff(factor_row, green_header + 1))
     }
   }
 
