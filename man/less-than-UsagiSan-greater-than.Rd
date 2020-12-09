@@ -43,6 +43,11 @@ The function rowBind is more useful and flexible than rbind. You can merge two o
 The function colBind is more useful and flexible than cbind. You can merge two objects without adjusting the number of rows or columns.
 }
 
+\section{getIndex}{
+
+The function getIndex gives you the indices of some item in a vector or a list.
+}
+
 \seealso{
 \code{\link{excelColor}}
 
@@ -57,6 +62,8 @@ The function colBind is more useful and flexible than cbind. You can merge two o
 \code{\link{rowBind}}
 
 \code{\link{colBind}}
+
+\code{\link{getIndex}}
 
 My web site: \url{https://multivariate-statistics.com}
 }

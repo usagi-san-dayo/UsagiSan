@@ -24,6 +24,9 @@
 #' @section colBind:
 #' The function colBind is more useful and flexible than cbind. You can merge two objects without adjusting the number of rows or columns.
 #'
+#' @section getIndex:
+#' The function getIndex gives you the indices of some item in a vector or a list.
+#'
 #' @seealso \code{\link{excelColor}}
 #' @seealso \code{\link{excelHeadColor}}
 #' @seealso \code{\link{mkDirectories}}
@@ -31,6 +34,7 @@
 #' @seealso \code{\linkS4class{dataCleansing}}
 #' @seealso \code{\link{rowBind}}
 #' @seealso \code{\link{colBind}}
+#' @seealso \code{\link{getIndex}}
 #' @seealso My web site: \url{https://multivariate-statistics.com}
 #'
 #' @docType package
@@ -195,15 +199,10 @@ removeNA <- function(factor_row, adj) {
 #' @export
 #'
 excelColor <- function(dataName, fileName, level = 0.05, pValue = c("Pr(>|z|)", "Pr(>|t|)", "p-value"), significanceColor = "#FFFF00", headerColor = "#92D050", fontSize = 11, fontName = "Yu Gothic", fontColor = "#000000",  intercept = FALSE, adj = TRUE, fileEncoding = "CP932") {
-  options(warn = -1)
-  if (is.na(dataName)) {
-    stop("There is no data-name")
+  if (!is.character(dataName)) {
+    stop("The data-name must be character")
   }
-  options(warn = 0)
-  if (is.na(fileName)) {
-    stop("There is no file-name")
-  }
-  if (!(is.character(fileName))) {
+  if (!is.character(fileName)) {
     stop("The file-name must be character")
   }
   data <- utils::read.table(paste0(dataName, ".csv"), fill = TRUE, header = FALSE, sep = ",", blank.lines.skip = FALSE, fileEncoding = fileEncoding)
@@ -407,15 +406,10 @@ writeDatas <- function(factor_list, data, wb) {
 #' @export
 #'
 excelHeadColor <- function(dataName, fileName, header, headerColor = "#92D050", fontSize = 11, fontName = "Yu Gothic", fontColor = "#000000", adj = TRUE, fileEncoding = "CP932") {
-  options(warn = -1)
-  if (is.na(dataName)) {
-    stop("There is no data-name")
+  if (!is.character(dataName)) {
+    stop("The data-name must be character")
   }
-  options(warn = 0)
-  if (is.na(fileName)) {
-    stop("There is no file-name")
-  }
-  if (!(is.character(fileName))) {
+  if (!is.character(fileName)) {
     stop("The file-name must be character")
   }
   data <- utils::read.table(paste0(dataName, ".csv"), fill = TRUE, header = FALSE, sep = ",", blank.lines.skip = FALSE, fileEncoding = fileEncoding)
@@ -1702,4 +1696,28 @@ colBind <- function(x, y, sep = TRUE) {
   }
   colnames(bindedDataFrame) <- rep("", ncol(bindedDataFrame))
   return(bindedDataFrame)
+}
+
+#'
+#' Getting the indices of some item in a vector or a list.
+#' @encoding UTF-8
+#'
+#' @param x A vector or list type object
+#' @param item The item in x indexed
+#'
+#' @export
+getIndex <- function(x, item) {
+  if (!is.vector(x)) {
+    stop("The Argument x must be a vector or list type object")
+  }
+  if (is.list(x)) {
+    isItem <- unlist(lapply(x, function(y) {
+      return(all(y == item))
+    }))
+    return(length(isItem[isItem]))
+  }
+  else {
+    names(x) <- seq_len(length(x))
+    return(as.numeric(names(x[x == item])))
+  }
 }
