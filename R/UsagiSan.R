@@ -21,6 +21,9 @@
 #' @section rowBind:
 #' The function rowBind is more useful and flexible than rbind. You can merge two objects without adjusting the number of rows or columns.
 #'
+#' @section mergeRowAndColnamesWithData:
+#' The function mergeRowAndColnamesWithData reshapes a dataframe so that it has own rownames and colnames as its components.
+#'
 #' @section colBind:
 #' The function colBind is more useful and flexible than cbind. You can merge two objects without adjusting the number of rows or columns.
 #'
@@ -32,6 +35,7 @@
 #' @seealso \code{\link{mkDirectories}}
 #' @seealso \code{\link{dataCleanser}}
 #' @seealso \code{\linkS4class{dataCleansing}}
+#' @seealso \code{\link{mergeRowAndColnamesWithData}}
 #' @seealso \code{\link{rowBind}}
 #' @seealso \code{\link{colBind}}
 #' @seealso \code{\link{getIndex}}
@@ -1606,7 +1610,12 @@ setRefClass(
   )
 )
 
-initialiseDataFrame <- function(x) {
+#' Merging rownames and colnames with a data.frame type object. This function reshapes a dataframe to the form having rownames and colnames as components of a dataframe not as its rownames and colnames.
+#'
+#' @param x A vector or dataframe type object you want to merge its rownames and colnames with.
+#'
+#' @export
+mergeRowAndColnamesWithData <- function(x) {
   dataFrame <- as.data.frame(x)
   colnames(dataFrame) <- rep("", ncol(dataFrame))
   rownames(dataFrame) <- seq_len(nrow(dataFrame))
@@ -1641,8 +1650,8 @@ initialiseDataFrame <- function(x) {
 #'
 #' @export
 rowBind <- function(x, y, sep = TRUE) {
-  dataFrameX <- initialiseDataFrame(x)
-  dataFrameY <- initialiseDataFrame(y)
+  dataFrameX <- mergeRowAndColnamesWithData(x)
+  dataFrameY <- mergeRowAndColnamesWithData(y)
 
   diffOfNCol <- ncol(dataFrameX) - ncol(dataFrameY)
   if (diffOfNCol > 0) {
@@ -1673,8 +1682,8 @@ rowBind <- function(x, y, sep = TRUE) {
 #'
 #' @export
 colBind <- function(x, y, sep = TRUE) {
-  dataFrameX <- initialiseDataFrame(x)
-  dataFrameY <- initialiseDataFrame(y)
+  dataFrameX <- mergeRowAndColnamesWithData(x)
+  dataFrameY <- mergeRowAndColnamesWithData(y)
 
   diffOfNRow <- nrow(dataFrameX) - nrow(dataFrameY)
   if (diffOfNRow > 0) {

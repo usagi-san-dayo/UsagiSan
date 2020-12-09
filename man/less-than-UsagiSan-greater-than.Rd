@@ -38,6 +38,11 @@ The class dataCleansing have several methods to operate dataCleanser. This provi
 The function rowBind is more useful and flexible than rbind. You can merge two objects without adjusting the number of rows or columns.
 }
 
+\section{mergeRowAndColnamesWithData}{
+
+The function mergeRowAndColnamesWithData reshapes a dataframe so that it has own rownames and colnames as its components.
+}
+
 \section{colBind}{
 
 The function colBind is more useful and flexible than cbind. You can merge two objects without adjusting the number of rows or columns.
@@ -58,6 +63,8 @@ The function getIndex gives you the indices of some item in a vector or a list.
 \code{\link{dataCleanser}}
 
 \code{\linkS4class{dataCleansing}}
+
+\code{\link{mergeRowAndColnamesWithData}}
 
 \code{\link{rowBind}}
 
