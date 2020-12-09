@@ -33,6 +33,16 @@ The function dataCleanser helps you to cleans a dataset. This function modifies 
 The class dataCleansing have several methods to operate dataCleanser. This provides how to classify a vector object into numeric, factor or Date type object.
 }
 
+\section{rowBind}{
+
+The function rowBind is more useful and flexible than rbind. You can merge two objects without adjusting the number of rows or columns.
+}
+
+\section{colBind}{
+
+The function colBind is more useful and flexible than cbind. You can merge two objects without adjusting the number of rows or columns.
+}
+
 \seealso{
 \code{\link{excelColor}}
 
@@ -43,6 +53,10 @@ The class dataCleansing have several methods to operate dataCleanser. This provi
 \code{\link{dataCleanser}}
 
 \code{\linkS4class{dataCleansing}}
+
+\code{\link{rowBind}}
+
+\code{\link{colBind}}
 
 My web site: \url{https://multivariate-statistics.com}
 }

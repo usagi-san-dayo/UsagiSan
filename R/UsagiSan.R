@@ -18,11 +18,19 @@
 #' @section dataCleansing:
 #' The class dataCleansing have several methods to operate dataCleanser. This provides how to classify a vector object into numeric, factor or Date type object.
 #'
+#' @section rowBind:
+#' The function rowBind is more useful and flexible than rbind. You can merge two objects without adjusting the number of rows or columns.
+#'
+#' @section colBind:
+#' The function colBind is more useful and flexible than cbind. You can merge two objects without adjusting the number of rows or columns.
+#'
 #' @seealso \code{\link{excelColor}}
 #' @seealso \code{\link{excelHeadColor}}
 #' @seealso \code{\link{mkDirectories}}
 #' @seealso \code{\link{dataCleanser}}
 #' @seealso \code{\linkS4class{dataCleansing}}
+#' @seealso \code{\link{rowBind}}
+#' @seealso \code{\link{colBind}}
 #' @seealso My web site: \url{https://multivariate-statistics.com}
 #'
 #' @docType package
@@ -358,21 +366,19 @@ mkFactorList <- function(green_header, footer, factor_list, count, data) {
 
 writeDatas <- function(factor_list, data, wb) {
   options(warn = -1)
-  for (i in seq_len(length(factor_list))) {
-    bar <- data[factor_list[[i]], ]
-    for (j in seq_len(ncol(data[factor_list[[i]], ]))) {
-      bar[bar[, j] == "", j] <- NA
-      if (!any((is.na(as.numeric(stats::na.omit(bar[, j])))))) {
-        if (all(as.numeric(stats::na.omit(bar[, j])) == as.character(as.numeric(stats::na.omit(bar[, j]))))) {
-          bar[, j] <- as.numeric(bar[, j])
+  lapply(factor_list, function(x) {
+    bar <- data[x, ]
+    for (i in seq_len(ncol(data[x, ]))) {
+      bar[bar[, i] == "", i] <- NA
+      if (!any(is.na(as.numeric(stats::na.omit(bar[, i]))))) {
+        if (all(as.numeric(stats::na.omit(bar[, i])) == as.character(as.numeric(stats::na.omit(bar[, i]))))) {
+          bar[, i] <- as.numeric(bar[, i])
         }
       }
     }
-    openxlsx::writeData(wb, sheet = "Sheet 1", x = bar, startRow = factor_list[[i]][1], startCol = 1, colNames = F, withFilter = F)
-  }
+    openxlsx::writeData(wb, sheet = "Sheet 1", x = bar, startRow = x[1], startCol = 1, colNames = F, withFilter = F)
+  })
   options(warn = 0)
-
-
 }
 #'
 #' Coloring headers of tables on a EXCEL sheet
@@ -1007,7 +1013,7 @@ isCorrectFormat <- function(dateAsFormat) {
 #'
 #' @importFrom data.table fread
 #' @export
-dataCleanser = function(dataName, append = FALSE, numOrFac = 10, leastNumOfDate = 10, fileEncoding = "CP932") {
+dataCleanser <- function(dataName, append = FALSE, numOrFac = 10, leastNumOfDate = 10, fileEncoding = "CP932") {
   files <- list.files()
   if (any(files == paste0("dataCleansingForm_", dataName, "_.xlsx")) == FALSE) {
     data <- as.data.frame(readData(dataName, fileEncoding))
@@ -1605,3 +1611,95 @@ setRefClass(
     }
   )
 )
+
+initialiseDataFrame <- function(x) {
+  dataFrame <- as.data.frame(x)
+  colnames(dataFrame) <- rep("", ncol(dataFrame))
+  rownames(dataFrame) <- seq_len(nrow(dataFrame))
+  for (i in seq_len(length(dataFrame))) {
+    if (is.factor(dataFrame[, i])) {
+      dataFrame[, i] <- as.character(dataFrame[, i])
+    }
+  }
+  if (!is.null(rownames(x))) {
+    rownamesDataFrame <- as.data.frame(rownames(x))
+    colnames(rownamesDataFrame) <- rep("", ncol(rownamesDataFrame))
+    dataFrame <- cbind(rownamesDataFrame, dataFrame)
+  }
+  colnames(dataFrame) <- rep("", ncol(dataFrame))
+  if (!is.null(colnames(x))) {
+    colnamesDataFrame <- as.data.frame(t(colnames(x)))
+    if (ncol(x) != ncol(dataFrame)) {
+      colnamesDataFrame <- cbind("", colnamesDataFrame)
+    }
+    colnames(colnamesDataFrame) <- rep("", ncol(colnamesDataFrame))
+    dataFrame <- rbind(colnamesDataFrame, dataFrame)
+  }
+  return(dataFrame)
+}
+
+#' Merging two objects (data.frame, vector) in a vertical direction without adjusting the each number of rows or columns.
+#' @encoding UTF-8
+#'
+#' @param x Data.frame type object or vector type object you want to merge with y.
+#' @param y Data.frame type object or vector type object merged with x
+#' @param sep Whether you separate x and y with a empty column
+#'
+#' @export
+rowBind <- function(x, y, sep = TRUE) {
+  dataFrameX <- initialiseDataFrame(x)
+  dataFrameY <- initialiseDataFrame(y)
+
+  diffOfNCol <- ncol(dataFrameX) - ncol(dataFrameY)
+  if (diffOfNCol > 0) {
+    dataFrameY <- cbind(dataFrameY, matrix(rep("", nrow(dataFrameY) * abs(diffOfNCol)), nrow = nrow(dataFrameY)))
+  }
+  else {
+    dataFrameX <- cbind(dataFrameX, matrix(rep("", nrow(dataFrameX) * abs(diffOfNCol)), nrow = nrow(dataFrameX)))
+  }
+  colnames(dataFrameX) <- rep("", ncol(dataFrameX))
+  colnames(dataFrameY) <- rep("", ncol(dataFrameY))
+  bindedDataFrame <- NULL
+  if (sep) {
+    bindedDataFrame <- rbind(dataFrameX, rep("", ncol(dataFrameX)), dataFrameY)
+  }
+  else {
+    bindedDataFrame <- rbind(dataFrameX, dataFrameY)
+  }
+  colnames(bindedDataFrame) <- rep("", ncol(bindedDataFrame))
+  return(bindedDataFrame)
+}
+#'
+#'#' Merging two objects (data.frame, vector) in a horizontal direction without adjusting the each number of rows or columns.
+#' @encoding UTF-8
+#'
+#' @param x Data.frame type object or vector type object you want to merge with y.
+#' @param y Data.frame type object or vector type object merged with x
+#' @param sep Whether you separate x and y with a empty row
+#'
+#' @export
+colBind <- function(x, y, sep = TRUE) {
+  dataFrameX <- initialiseDataFrame(x)
+  dataFrameY <- initialiseDataFrame(y)
+
+  diffOfNRow <- nrow(dataFrameX) - nrow(dataFrameY)
+  if (diffOfNRow > 0) {
+    emptyDataFrame <- as.data.frame(matrix(rep("", ncol(dataFrameY) * abs(diffOfNRow)), ncol = ncol(dataFrameY)))
+    colnames(emptyDataFrame) <- rep("", ncol(emptyDataFrame))
+    dataFrameY <- rbind(dataFrameY, emptyDataFrame)
+  }
+  else {
+    emptyDataFrame <- as.data.frame(matrix(rep("", ncol(dataFrameX) * abs(diffOfNRow)), ncol = ncol(dataFrameX)))
+    colnames(emptyDataFrame) <- rep("", ncol(emptyDataFrame))
+    dataFrameX <- rbind(dataFrameX, emptyDataFrame)
+  }
+  bindedDataFrame <- NULL
+  if (sep) {
+    bindedDataFrame <- cbind(dataFrameX, rep("", nrow(dataFrameX)), dataFrameY)
+  }
+  else {
+    bindedDataFrame <- cbind(dataFrameX, dataFrameY)
+  }
+  colnames(bindedDataFrame) <- rep("", ncol(bindedDataFrame))
+  return(bindedDataFrame)
+}
