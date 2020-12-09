@@ -1670,7 +1670,7 @@ rowBind <- function(x, y, sep = TRUE) {
   return(bindedDataFrame)
 }
 #'
-#'#' Merging two objects (data.frame, vector) in a horizontal direction without adjusting the each number of rows or columns.
+#' Merging two objects (data.frame, vector) in a horizontal direction without adjusting the each number of rows or columns.
 #' @encoding UTF-8
 #'
 #' @param x Data.frame type object or vector type object you want to merge with y.

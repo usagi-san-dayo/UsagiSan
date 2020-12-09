@@ -3,7 +3,7 @@
 \encoding{UTF-8}
 \name{colBind}
 \alias{colBind}
-\title{#' Merging two objects (data.frame, vector) in a horizontal direction without adjusting the each number of rows or columns.}
+\title{Merging two objects (data.frame, vector) in a horizontal direction without adjusting the each number of rows or columns.}
 \usage{
 colBind(x, y, sep = TRUE)
 }
@@ -15,5 +15,5 @@ colBind(x, y, sep = TRUE)
 \item{sep}{Whether you separate x and y with a empty row}
 }
 \description{
-#' Merging two objects (data.frame, vector) in a horizontal direction without adjusting the each number of rows or columns.
+Merging two objects (data.frame, vector) in a horizontal direction without adjusting the each number of rows or columns.
 }
