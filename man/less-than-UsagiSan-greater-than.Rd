@@ -33,14 +33,14 @@ The function dataCleanser helps you to cleans a dataset. This function modifies 
 The class dataCleansing have several methods to operate dataCleanser. This provides how to classify a vector object into numeric, factor or Date type object.
 }
 
-\section{rowBind}{
-
-The function rowBind is more useful and flexible than rbind. You can merge two objects without adjusting the number of rows or columns.
-}
-
 \section{mergeRowAndColnamesWithData}{
 
 The function mergeRowAndColnamesWithData reshapes a dataframe so that it has own rownames and colnames as its components.
+}
+
+\section{rowBind}{
+
+The function rowBind is more useful and flexible than rbind. You can merge two objects without adjusting the number of rows or columns.
 }
 
 \section{colBind}{

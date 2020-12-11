@@ -18,11 +18,11 @@
 #' @section dataCleansing:
 #' The class dataCleansing have several methods to operate dataCleanser. This provides how to classify a vector object into numeric, factor or Date type object.
 #'
-#' @section rowBind:
-#' The function rowBind is more useful and flexible than rbind. You can merge two objects without adjusting the number of rows or columns.
-#'
 #' @section mergeRowAndColnamesWithData:
 #' The function mergeRowAndColnamesWithData reshapes a dataframe so that it has own rownames and colnames as its components.
+#'
+#' @section rowBind:
+#' The function rowBind is more useful and flexible than rbind. You can merge two objects without adjusting the number of rows or columns.
 #'
 #' @section colBind:
 #' The function colBind is more useful and flexible than cbind. You can merge two objects without adjusting the number of rows or columns.
@@ -1723,7 +1723,7 @@ getIndex <- function(x, item) {
     isItem <- unlist(lapply(x, function(y) {
       return(all(y == item))
     }))
-    return(length(isItem[isItem]))
+    return(seq_len(length(isItem))[isItem])
   }
   else {
     names(x) <- seq_len(length(x))
