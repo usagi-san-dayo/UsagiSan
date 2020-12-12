@@ -8,9 +8,9 @@
 getIndex(x, item)
 }
 \arguments{
-\item{x}{A vector or list type object}
+\item{x}{A vector or list type object.}
 
-\item{item}{The item in x indexed}
+\item{item}{The item in x indexed.}
 }
 \description{
 Getting the indices of some item in a vector or a list.

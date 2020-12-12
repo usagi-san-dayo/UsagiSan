@@ -28,7 +28,25 @@
 #' The function colBind is more useful and flexible than cbind. You can merge two objects without adjusting the number of rows or columns.
 #'
 #' @section getIndex:
-#' The function getIndex gives you the indices of some item in a vector or a list.
+#' The function getIndex gives you the indices of an item in a vector or a list.
+#'
+#' @section getCount:
+#' The function getCount gives you the number of an item in a vector or a list.
+#'
+#' @section append_vecOrList:
+#' The function append_vecOrList appends two vector or list type objects.
+#'
+#' @section extend_vecOrList:
+#' The function getCount extend_vecOrList two vector or list type objects to make a extended vector or list.
+#'
+#' @section insert_vecOrList:
+#' The function insert_vecOrList inserts an item at the specified index in a vector or list type object.
+#'
+#' @section remove_vecOrList:
+#' The function remove_vecOrList removes an item from a vector or list type object.
+#'
+#' @section pop_vecOrList:
+#' The function pop_vecOrList pops an item from a vector or list type object.
 #'
 #' @seealso \code{\link{excelColor}}
 #' @seealso \code{\link{excelHeadColor}}
@@ -39,6 +57,12 @@
 #' @seealso \code{\link{rowBind}}
 #' @seealso \code{\link{colBind}}
 #' @seealso \code{\link{getIndex}}
+#' @seealso \code{\link{getCount}}
+#' @seealso \code{\link{append_vecOrList}}
+#' @seealso \code{\link{extend_vecOrList}}
+#' @seealso \code{\link{insert_vecOrList}}
+#' @seealso \code{\link{remove_vecOrList}}
+#' @seealso \code{\link{pop_vecOrList}}
 #' @seealso My web site: \url{https://multivariate-statistics.com}
 #'
 #' @docType package
@@ -1645,8 +1669,8 @@ mergeRowAndColnamesWithData <- function(x) {
 #' @encoding UTF-8
 #'
 #' @param x Data.frame type object or vector type object you want to merge with y.
-#' @param y Data.frame type object or vector type object merged with x
-#' @param sep Whether you separate x and y with a empty column
+#' @param y Data.frame type object or vector type object merged with x.
+#' @param sep Whether you separate x and y with a empty column.
 #'
 #' @export
 rowBind <- function(x, y, sep = TRUE) {
@@ -1677,8 +1701,8 @@ rowBind <- function(x, y, sep = TRUE) {
 #' @encoding UTF-8
 #'
 #' @param x Data.frame type object or vector type object you want to merge with y.
-#' @param y Data.frame type object or vector type object merged with x
-#' @param sep Whether you separate x and y with a empty row
+#' @param y Data.frame type object or vector type object merged with x.
+#' @param sep Whether you separate x and y with a empty row.
 #'
 #' @export
 colBind <- function(x, y, sep = TRUE) {
@@ -1711,8 +1735,8 @@ colBind <- function(x, y, sep = TRUE) {
 #' Getting the indices of some item in a vector or a list.
 #' @encoding UTF-8
 #'
-#' @param x A vector or list type object
-#' @param item The item in x indexed
+#' @param x A vector or list type object.
+#' @param item The item in x indexed.
 #'
 #' @export
 getIndex <- function(x, item) {
@@ -1726,7 +1750,105 @@ getIndex <- function(x, item) {
     return(seq_len(length(isItem))[isItem])
   }
   else {
+    if (length(item) > 1) {
+      stop("The length of the argument item must be 1")
+    }
     names(x) <- seq_len(length(x))
     return(as.numeric(names(x[x == item])))
   }
+}
+#'
+#' Getting the number of a component in a vector or a list.
+#' @encoding UTF-8
+#'
+#' @param x A vector or list type object.
+#' @param item A component in x.
+#'
+#' @export
+getCount <- function(x, item) {
+  return(length(getIndex(x, item)))
+}
+#'
+#' Appending two vector or list type objects.
+#' @encoding UTF-8
+#'
+#' @param x A vector or list type object.
+#' @param item A vector or list type object appended to x.
+#'
+#' @export
+append_vecOrList <- function(x, item) {
+  if (!is.vector(x)) {
+    stop("The Argument x must be a vector or list type object")
+  }
+  if (is.list(x) & !is.list(item)) {
+    item <- list(item)
+  }
+  return(c(x, item))
+}
+#'
+#' Merging two vector or list type objects.
+#' @encoding UTF-8
+#'
+#' @param x A vector or list type object.
+#' @param item A vector or list type object merged with x.
+#'
+#' @export
+extend_vecOrList <- function(x, item) {
+  if (!is.vector(x)) {
+    stop("The Argument x must be a vector or list type object")
+  }
+  return(c(x, item))
+}
+#'
+#' Inserting an item into a vector or list type object.
+#' @encoding UTF-8
+#'
+#' @param x A vector or list type object.
+#' @param i The index which an item inserted at.
+#' @param item A vector or list type object merged with x.
+#'
+#' @export
+insert_vecOrList <- function(x, i, item) {
+  if (!is.vector(x)) {
+    stop("The Argument x must be a vector or list type object")
+  }
+  if (is.list(x) & !is.list(item)) {
+    item <- list(item)
+  }
+  return(c(x[seq_len(i - 1)], item, x[i : length(x)]))
+}
+#'
+#' Removing an item in a vector or list type object.
+#' @encoding UTF-8
+#'
+#' @param x A vector or list type object.
+#' @param item An item removed from x.
+#'
+#' @export
+remove_vecOrList <- function(x, item) {
+  indices <- getIndex(x, item)
+  return(x[- indices])
+}
+#'
+#' Popping an item from a vector or list type object.
+#' @encoding UTF-8
+#'
+#' @param x A vector or list type object.
+#' @param i The index of a component in x popped.
+#'
+#' @export
+pop_vecOrList <- function(x, i) {
+  if (!is.vector(x)) {
+    stop("The Argument x must be a vector or list type object")
+  }
+  if (i < 1 | i > length(x)) {
+    stop("The Argument i must greater than 1 and less than the length of x")
+  }
+  if (i + 1 <= length(x)) {
+    poppedX <- c(x[seq_len(i - 1)], x[(i + 1) : length(x)])
+  }
+  else {
+    poppedX <- x[seq_len(i - 1)]
+  }
+  return(list(poppedX = poppedX, xi = x[i]))
 }

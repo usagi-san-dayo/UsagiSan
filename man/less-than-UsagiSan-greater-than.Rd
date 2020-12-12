@@ -50,7 +50,37 @@ The function colBind is more useful and flexible than cbind. You can merge two o
 
 \section{getIndex}{
 
-The function getIndex gives you the indices of some item in a vector or a list.
+The function getIndex gives you the indices of an item in a vector or a list.
+}
+
+\section{getCount}{
+
+The function getCount gives you the number of an item in a vector or a list.
+}
+
+\section{append_vecOrList}{
+
+The function append_vecOrList appends two vector or list type objects.
+}
+
+\section{extend_vecOrList}{
+
+The function getCount extend_vecOrList two vector or list type objects to make a extended vector or list.
+}
+
+\section{insert_vecOrList}{
+
+The function insert_vecOrList inserts an item at the specified index in a vector or list type object.
+}
+
+\section{remove_vecOrList}{
+
+The function remove_vecOrList removes an item from a vector or list type object.
+}
+
+\section{pop_vecOrList}{
+
+The function pop_vecOrList pops an item from a vector or list type object.
 }
 
 \seealso{
@@ -71,6 +101,18 @@ The function getIndex gives you the indices of some item in a vector or a list.
 \code{\link{colBind}}
 
 \code{\link{getIndex}}
+
+\code{\link{getCount}}
+
+\code{\link{append_vecOrList}}
+
+\code{\link{extend_vecOrList}}
+
+\code{\link{insert_vecOrList}}
+
+\code{\link{remove_vecOrList}}
+
+\code{\link{pop_vecOrList}}
 
 My web site: \url{https://multivariate-statistics.com}
 }

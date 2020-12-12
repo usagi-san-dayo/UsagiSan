@@ -10,9 +10,9 @@ colBind(x, y, sep = TRUE)
 \arguments{
 \item{x}{Data.frame type object or vector type object you want to merge with y.}
 
-\item{y}{Data.frame type object or vector type object merged with x}
+\item{y}{Data.frame type object or vector type object merged with x.}
 
-\item{sep}{Whether you separate x and y with a empty row}
+\item{sep}{Whether you separate x and y with a empty row.}
 }
 \description{
 Merging two objects (data.frame, vector) in a horizontal direction without adjusting the each number of rows or columns.
