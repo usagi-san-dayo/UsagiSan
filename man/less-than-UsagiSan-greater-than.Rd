@@ -18,6 +18,11 @@ The function excelColor helps you to edit the test results with coloring the sig
 The function excelHeadColor helps you to add colors on headers of any type of tables including summaty sheets and statistical test tables.
 }
 
+\section{colorCells_xlsx}{
+
+The function colorCells_xlsx colors columns with specified condition for rows in a EXCEL-sheet. This enables to color any EXCEL-sheets overwriting previous workbook data. you can freely intuitively edit EXCEL-sheets.
+}
+
 \section{mkDirectories}{
 
 The function mkDirectories organizes files in tha working directory.
@@ -85,6 +90,8 @@ The function pop_vecOrList pops an item from a vector or list type object.
 
 \seealso{
 \code{\link{excelColor}}
+
+\code{\link{excelHeadColor}}
 
 \code{\link{excelHeadColor}}
 

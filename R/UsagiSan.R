@@ -9,6 +9,9 @@
 #' @section excelHeadColor:
 #' The function excelHeadColor helps you to add colors on headers of any type of tables including summaty sheets and statistical test tables.
 #'
+#' @section colorCells_xlsx:
+#' The function colorCells_xlsx colors columns with specified condition for rows in a EXCEL-sheet. This enables to color any EXCEL-sheets overwriting previous workbook data. you can freely intuitively edit EXCEL-sheets.
+#'
 #' @section mkDirectories:
 #' The function mkDirectories organizes files in tha working directory.
 #'
@@ -49,6 +52,7 @@
 #' The function pop_vecOrList pops an item from a vector or list type object.
 #'
 #' @seealso \code{\link{excelColor}}
+#' @seealso \code{\link{excelHeadColor}}
 #' @seealso \code{\link{excelHeadColor}}
 #' @seealso \code{\link{mkDirectories}}
 #' @seealso \code{\link{dataCleanser}}
@@ -481,6 +485,53 @@ excelHeadColor <- function(dataName, fileName, header, headerColor = "#92D050", 
 
     #write data
     writeDatas(factor_list, data, wb)
+  }
+  openxlsx::saveWorkbook(wb, paste0(fileName, ".xlsx"), overwrite = TRUE)
+}
+#'
+#' Coloring the columns specifying rows conditions
+#' @encoding UTF-8
+#'
+#' @param dataName The name of a csv-file you want to edit with coloring.
+#' @param fileName The name of a Excel-file you want to save as.
+#' @param sheetName The name of a EXCEL-sheet you want to color.
+#' @param coloredCols The Columns colored with the specified color.
+#' @param coloredCondition The condition for rows. This argument must be a logical vector in which TRUE components indicate row indices colored and neither FALSE components dose.
+#' @param cellColor The color you want to color with
+#' @param fontSize Font-size.
+#' @param fontName Font-name.
+#' @param fontColor The color of fonts.
+#'
+#' @importFrom openxlsx loadWorkbook
+#' @importFrom openxlsx createWorkbook
+#' @importFrom openxlsx addWorksheet
+#' @importFrom openxlsx createStyle
+#' @importFrom openxlsx addStyle
+#' @importFrom openxlsx writeData
+#' @importFrom openxlsx modifyBaseFont
+#' @importFrom openxlsx saveWorkbook
+#'
+#' @export
+#'
+colorCells_xlsx <- function(dataName, fileName, sheetName, coloredCols, coloredCondition = NULL, cellColor, fontSize = 11, fontName = "Yu Gothic", fontColor = "#000000") {
+  if (!is.character(dataName)) {
+    stop("The data-name must be character")
+  }
+  if (!is.character(fileName)) {
+    stop("The file-name must be character")
+  }
+  wb <- loadWorkbook(paste0(dataName, ".xlsx"))
+  data <- as.data.frame(openxlsx::read.xlsx(paste0(dataName, ".xlsx"), sheet = sheetName))
+  data <- replace(data, is.na(data), "")
+  st <- openxlsx::createStyle(fontName = fontName, fontSize = fontSize)
+  openxlsx::addStyle(wb, sheetName, style = st, cols = 1:2, rows = 1:2)
+  openxlsx::writeData(wb, sheet = sheetName, x = t(colnames(data)), colNames = F, withFilter = F, startRow = 1, startCol = 1)
+  openxlsx::writeData(wb, sheet = sheetName, x = data, colNames = F, withFilter = F, startRow = 2, startCol = 1)
+  openxlsx::modifyBaseFont(wb, fontSize = fontSize, fontColour = fontColor, fontName = fontName)
+  st <- openxlsx::createStyle(fontName = fontName, fontSize = fontSize, fgFill = cellColor)
+  coloredRows <- as.numeric(rownames(data[coloredCondition, ])) + 1
+  for (i in coloredCols) {
+    openxlsx::addStyle(wb, sheetName, style = st, cols = i, rows = coloredRows)
   }
   openxlsx::saveWorkbook(wb, paste0(fileName, ".xlsx"), overwrite = TRUE)
 }
