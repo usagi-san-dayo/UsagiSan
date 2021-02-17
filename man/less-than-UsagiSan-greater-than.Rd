@@ -88,6 +88,16 @@ The function remove_vecOrList removes an item from a vector or list type object.
 The function pop_vecOrList pops an item from a vector or list type object.
 }
 
+\section{isEqualData}{
+
+The function isEqualData compares two data in txt, csv or xlsx files and returns results whether the two data are the same or not (if not, the row and column indices where components are not equal are printed out).
+}
+
+\section{getSummaryTable }{
+
+The function getSummarytable Creates a summary table for numeric and factor data in terms of each level of a factor data.
+}
+
 \seealso{
 \code{\link{excelColor}}
 
@@ -120,6 +130,10 @@ The function pop_vecOrList pops an item from a vector or list type object.
 \code{\link{remove_vecOrList}}
 
 \code{\link{pop_vecOrList}}
+
+\code{\link{isEqualData}}
+
+\code{\link{getSummaryTable}}
 
 My web site: \url{https://multivariate-statistics.com}
 }

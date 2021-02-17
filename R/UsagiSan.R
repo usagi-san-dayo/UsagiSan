@@ -51,6 +51,12 @@
 #' @section pop_vecOrList:
 #' The function pop_vecOrList pops an item from a vector or list type object.
 #'
+#' @section isEqualData:
+#' The function isEqualData compares two data in txt, csv or xlsx files and returns results whether the two data are the same or not (if not, the row and column indices where components are not equal are printed out).
+#'
+#' @section getSummaryTable :
+#' The function getSummarytable Creates a summary table for numeric and factor data in terms of each level of a factor data.
+#'
 #' @seealso \code{\link{excelColor}}
 #' @seealso \code{\link{excelHeadColor}}
 #' @seealso \code{\link{excelHeadColor}}
@@ -67,6 +73,8 @@
 #' @seealso \code{\link{insert_vecOrList}}
 #' @seealso \code{\link{remove_vecOrList}}
 #' @seealso \code{\link{pop_vecOrList}}
+#' @seealso \code{\link{isEqualData}}
+#' @seealso \code{\link{getSummaryTable}}
 #' @seealso My web site: \url{https://multivariate-statistics.com}
 #'
 #' @docType package
@@ -1902,4 +1910,147 @@ pop_vecOrList <- function(x, i) {
     poppedX <- x[seq_len(i - 1)]
   }
   return(list(poppedX = poppedX, xi = x[i]))
+}
+#'
+#' Compare two data in txt, csv or xlsx files.
+#' @encoding UTF-8
+#'
+#' @param fileName1 The name of file in which one of data you want to compare is saved.
+#' @param fileName2 The name of file in which another data you want to compare is saved.
+#' @param fileEncoding1 File-encoding for fileName1.
+#' @param fileEncoding2 File-encoding for fileName2.
+#'
+#' @importFrom utils read.csv
+#' @importFrom utils read.delim
+#'
+#' @export
+isEqualData <- function(fileName1, fileName2, fileEncoding1 = "CP932", fileEncoding2 = "CP932") {
+  splitedName1 <- unlist(strsplit(fileName1, "\\."))
+  splitedName2 <- unlist(strsplit(fileName2, "\\."))
+  extension1 <- splitedName1[length(splitedName1)]
+  extension2 <- splitedName2[length(splitedName2)]
+  extensions <- tolower(c(extension1, extension2))
+  fileNames <- c(fileName1, fileName2)
+  fileEncodings <- c(fileEncoding1, fileEncoding2)
+  dataList <- list(data1 = NULL, data2 = NULL)
+  for (i in seq_len(length(extensions))) {
+    if (extensions[i] == "txt") {
+      dataList[[i]] <- read.delim(fileNames[i], fill = TRUE, header = FALSE, sep = ",", blank.lines.skip = FALSE, fileEncoding = fileEncodings[i])
+    }
+    else if (extensions[i] == "csv") {
+      dataList[[i]] <- read.csv(fileNames[i], fill = TRUE, header = FALSE, sep = ",", blank.lines.skip = FALSE, fileEncoding = fileEncodings[i])
+    }
+    else if (extensions[i] == "xlsx") {
+      dataList[[i]] <- openxlsx::read.xlsx(fileNames[i])
+    }
+  }
+  isEqualEachCell <- dataList$data1 == dataList$data2
+  isEqualRow <- apply(isEqualEachCell, 1, all)
+  isEqualCol <- apply(isEqualEachCell, 2, all)
+  names(isEqualRow) <- seq_len(length(isEqualRow))
+  names(isEqualCol) <- seq_len(length(isEqualCol))
+  lastNotEqualIndex <- c(row = max(as.numeric(names(isEqualRow[!isEqualRow]))), col = max(as.numeric(names(isEqualCol[!isEqualCol]))))
+  if (all(isEqualEachCell)) {
+    writeLines("TRUE\n================================================================================")
+    writeLines(paste0("Data in", fileName1, " is equal to ", "data in ", fileName2))
+    writeLines("================================================================================")
+  }
+  else {
+    writeLines("FALSE\n================================================================================")
+    for (i in seq_len(nrow(isEqualEachCell))) {
+      for (j in seq_len(ncol(isEqualEachCell))) {
+        if (!isEqualEachCell[i, j]) {
+          if (i != lastNotEqualIndex["row"] | j != lastNotEqualIndex["col"]) {
+            writeLines(paste0("The ", i, ", ", j, " components are not the same:\ndata1[", i, ", ", j, "]: ",
+                              dataList$data1[i, j], "\ndata2[", i, ", ", j, "]: ", dataList$data2[i, j], "\n"))
+          }
+          else {
+            writeLines(paste0("The ", i, ", ", j, " components are not the same:\ndata1[", i, ", ", j, "]: ",
+                              dataList$data1[i, j], "\ndata2[", i, ", ", j, "]: ", dataList$data2[i, j]))
+          }
+        }
+      }
+    }
+    writeLines("================================================================================")
+  }
+}
+
+#' Create a summary table for numeric and factor data in terms of each level of a factor data.
+#' @encoding UTF-8
+#'
+#' @param data Dataset you want to summarize.
+#' @param namesForRow Column names assigned to row names of a summary table.
+#' @param nameForCol Column name assigned to col names of a summary table.
+#' @param digits integer indicating the number of decimal places.
+#' @param detail Whether to include standard deviation for numeric data and ratio for factor data.
+#'
+#' @importFrom stats sd
+#'
+#' @export
+getSummaryTable <- function(data, namesForRow, nameForCol, digits = 0, detail) {
+  if (length(nameForCol) > 1) {
+    stop("The length of the argument nameForCol must be one")
+  }
+  if (is.null(data)) {
+    stop("data is null")
+  }
+  table <- as.data.frame(matrix(rep(NA, nlevels(data[, nameForCol])), nrow = 1)[numeric(0), ])
+  colnames(table) <- rep("", ncol(table))
+  table <- rbind(table, t(c("", nameForCol, rep("", nlevels(data[, nameForCol]) - 1))))
+  table <- rbind(table, t(c("", levels(data[, nameForCol]))))
+  for (nameForRow in namesForRow) {
+    if (is.numeric(data[, nameForRow])) {
+      table <- rbind(table, getSummaryNumeric(data, nameForRow, nameForCol, digits, detail))
+    }
+    else if (is.factor(data[, nameForRow])) {
+      table <- rbind(table, getSummaryFactor(data, nameForRow, nameForCol, digits, detail))
+    }
+  }
+  return(table)
+}
+
+getSummaryNumeric <- function(data, nameForRow, nameForCol, digits, detail) {
+  tableRow <- NULL
+  if (detail) {
+    tableRow <- append(tableRow, c(paste0(nameForRow, " (sd)")))
+  }
+  else {
+    tableRow <- append(tableRow, nameForRow)
+  }
+  for (colLevel in levels(data[, nameForCol])) {
+    if (detail) {
+      tableRow <- append(tableRow, paste0(round(mean(data[data[, nameForCol] == colLevel, nameForRow]), digits = digits), " (", round(sd(data[data[, nameForCol] == colLevel, nameForRow]), digits = digits), ")"))
+    }
+    else {
+      tableRow <- append(tableRow, round(mean(data[data[, nameForCol] == colLevel, nameForRow]), digits = digits))
+    }
+  }
+  return(t(tableRow))
+}
+
+getSummaryFactor <- function(data, nameForRow, nameForCol, digits, detail) {
+  table <- as.data.frame(matrix(rep(NA, nlevels(data[, nameForCol])), nrow = 1)[numeric(0), ])
+  colnames(table) <- rep("", ncol(table))
+  tableRow <- NULL
+  if (detail) {
+    tableRow <- append(tableRow, c(paste0(nameForRow, " (%)"), rep("", nlevels(data[, nameForCol]))))
+  }
+  else {
+    tableRow <- append(tableRow, c(nameForRow, rep("", nlevels(data[, nameForCol]))))
+  }
+  table <- rbind(table, t(tableRow))
+  for (rowLevel in levels(data[, nameForRow])) {
+    tableRow <- rowLevel
+    for (colLevel in levels(data[, nameForCol])) {
+      data_eachCell <- data[data[, nameForCol] == colLevel & data[, nameForRow] == rowLevel, nameForRow]
+      if (detail) {
+        tableRow <- append(tableRow, paste0(length(data_eachCell), " (", round(length(data_eachCell) / nrow(data), digits = digits), ")"))
+      }
+      else {
+        tableRow <- append(tableRow, length(data_eachCell))
+      }
+    }
+    table <- rbind(table, t(tableRow))
+  }
+  return(table)
 }
