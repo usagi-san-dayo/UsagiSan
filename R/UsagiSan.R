@@ -1982,12 +1982,17 @@ isEqualData <- function(fileName1, fileName2, fileEncoding1 = "CP932", fileEncod
 #' @param namesForRow Column names assigned to row names of a summary table.
 #' @param nameForCol Column name assigned to col names of a summary table.
 #' @param digits integer indicating the number of decimal places.
-#' @param detail Whether to include standard deviation for numeric data and ratio for factor data.
+#' @param locationPar A Character variable which determine the location parameter.
+#' @param sd Whether to include standard deviation for numeric data. and ratio for factor data.
+#' @param Qu Whether to include 1-quantile and 2-quantile.
+#' @param ratio Whether to include ratio of percentage for each cell.
 #'
 #' @importFrom stats sd
+#' @importFrom stats median
+#' @importFrom stats na.omit
 #'
 #' @export
-getSummaryTable <- function(data, namesForRow, nameForCol, digits = 0, detail) {
+getSummaryTable <- function(data, namesForRow, nameForCol, digits = 0, locationPar = "mean", sd = FALSE, Qu = FALSE, ratio = FALSE) {
   if (length(nameForCol) > 1) {
     stop("The length of the argument nameForCol must be one")
   }
@@ -1996,43 +2001,54 @@ getSummaryTable <- function(data, namesForRow, nameForCol, digits = 0, detail) {
   }
   table <- as.data.frame(matrix(rep(NA, nlevels(data[, nameForCol])), nrow = 1)[numeric(0), ])
   colnames(table) <- rep("", ncol(table))
-  table <- rbind(table, t(c("", nameForCol, rep("", nlevels(data[, nameForCol]) - 1))))
-  table <- rbind(table, t(c("", levels(data[, nameForCol]))))
+  table <- rbind(table, t(c("", paste0(nameForCol, "(n=", length(na.omit(data[, nameForCol])), ")"), rep("", nlevels(data[, nameForCol]) - 1))))
+  table <- rbind(table, t(c("", paste0(levels(data[, nameForCol]), " (n=", table(na.omit(data[, nameForCol])), ")"))))
   for (nameForRow in namesForRow) {
     if (is.numeric(data[, nameForRow])) {
-      table <- rbind(table, getSummaryNumeric(data, nameForRow, nameForCol, digits, detail))
+      table <- rbind(table, getSummaryNumeric(data, nameForRow, nameForCol, digits, locationPar, sd, Qu))
     }
     else if (is.factor(data[, nameForRow])) {
-      table <- rbind(table, getSummaryFactor(data, nameForRow, nameForCol, digits, detail))
+      table <- rbind(table, getSummaryFactor(data, nameForRow, nameForCol, digits, ratio))
     }
   }
   return(table)
 }
 
-getSummaryNumeric <- function(data, nameForRow, nameForCol, digits, detail) {
+getSummaryNumeric <- function(data, nameForRow, nameForCol, digits, locationPar, sd, Qu) {
   tableRow <- NULL
-  if (detail) {
-    tableRow <- append(tableRow, c(paste0(nameForRow, " (sd)")))
+  label <- nameForRow
+  if (sd) {
+    label <- paste0(label, " (sd)")
   }
-  else {
-    tableRow <- append(tableRow, nameForRow)
+  if (Qu) {
+    label <- paste0(label, " [1st Qu., 3rd Qu.]")
   }
+  tableRow <- label
   for (colLevel in levels(data[, nameForCol])) {
-    if (detail) {
-      tableRow <- append(tableRow, paste0(round(mean(data[data[, nameForCol] == colLevel, nameForRow]), digits = digits), " (", round(sd(data[data[, nameForCol] == colLevel, nameForRow]), digits = digits), ")"))
+    cellValue <- NULL
+    if (locationPar == "mean") {
+      cellValue <- sprintf(paste0("%.", digits, "f"), mean(na.omit(data[data[, nameForCol] == colLevel, nameForRow])))
     }
-    else {
-      tableRow <- append(tableRow, round(mean(data[data[, nameForCol] == colLevel, nameForRow]), digits = digits))
+    else if(locationPar == "median") {
+      cellValue <- sprintf(paste0("%.", digits, "f"), median(na.omit(data[data[, nameForCol] == colLevel, nameForRow])))
     }
+    if (sd) {
+      cellValue <- paste0(cellValue, " (", sprintf(paste0("%.", digits, "f"), sd(na.omit(data[data[, nameForCol] == colLevel, nameForRow]))), ")")
+    }
+    if (Qu) {
+      summaryStats <- summary(data[data[, nameForCol] == colLevel, nameForRow])
+      cellValue <- paste0(cellValue, " [", sprintf(paste0("%.", digits, "f"), summaryStats["1st Qu."]), ", ", sprintf(paste0("%.", digits, "f"), summaryStats["3rd Qu."]), "]")
+    }
+    tableRow <- append(tableRow, cellValue)
   }
   return(t(tableRow))
 }
 
-getSummaryFactor <- function(data, nameForRow, nameForCol, digits, detail) {
+getSummaryFactor <- function(data, nameForRow, nameForCol, digits, ratio) {
   table <- as.data.frame(matrix(rep(NA, nlevels(data[, nameForCol])), nrow = 1)[numeric(0), ])
   colnames(table) <- rep("", ncol(table))
   tableRow <- NULL
-  if (detail) {
+  if (ratio) {
     tableRow <- append(tableRow, c(paste0(nameForRow, " (%)"), rep("", nlevels(data[, nameForCol]))))
   }
   else {
@@ -2042,9 +2058,9 @@ getSummaryFactor <- function(data, nameForRow, nameForCol, digits, detail) {
   for (rowLevel in levels(data[, nameForRow])) {
     tableRow <- rowLevel
     for (colLevel in levels(data[, nameForCol])) {
-      data_eachCell <- data[data[, nameForCol] == colLevel & data[, nameForRow] == rowLevel, nameForRow]
-      if (detail) {
-        tableRow <- append(tableRow, paste0(length(data_eachCell), " (", round(length(data_eachCell) / nrow(data), digits = digits), ")"))
+      data_eachCell <- na.omit(data[data[, nameForCol] == colLevel & data[, nameForRow] == rowLevel, nameForRow])
+      if (ratio) {
+        tableRow <- append(tableRow, paste0(length(data_eachCell), " (", sprintf(paste0("%.", digits, "f"), 100 * (length(data_eachCell) / length(data[data[, nameForCol] == colLevel, nameForRow]))), ")"))
       }
       else {
         tableRow <- append(tableRow, length(data_eachCell))

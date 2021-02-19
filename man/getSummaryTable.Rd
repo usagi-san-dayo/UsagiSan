@@ -5,7 +5,16 @@
 \alias{getSummaryTable}
 \title{Create a summary table for numeric and factor data in terms of each level of a factor data.}
 \usage{
-getSummaryTable(data, namesForRow, nameForCol, digits = 0, detail)
+getSummaryTable(
+  data,
+  namesForRow,
+  nameForCol,
+  digits = 0,
+  locationPar = "mean",
+  sd = FALSE,
+  Qu = FALSE,
+  ratio = FALSE
+)
 }
 \arguments{
 \item{data}{Dataset you want to summarize.}
@@ -16,7 +25,13 @@ getSummaryTable(data, namesForRow, nameForCol, digits = 0, detail)
 
 \item{digits}{integer indicating the number of decimal places.}
 
-\item{detail}{Whether to include standard deviation for numeric data and ratio for factor data.}
+\item{locationPar}{A Character variable which determine the location parameter.}
+
+\item{sd}{Whether to include standard deviation for numeric data. and ratio for factor data.}
+
+\item{Qu}{Whether to include 1-quantile and 2-quantile.}
+
+\item{ratio}{Whether to include ratio of percentage for each cell.}
 }
 \description{
 Create a summary table for numeric and factor data in terms of each level of a factor data.
