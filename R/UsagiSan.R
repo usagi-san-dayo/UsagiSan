@@ -1738,10 +1738,16 @@ rowBind <- function(x, y, rowNames = TRUE, colNames = TRUE, sep = TRUE) {
   dataFrameX <- mergeRowAndColnamesWithData(x)
   dataFrameY <- mergeRowAndColnamesWithData(y)
   if (!rowNames) {
-    dataFrameX <- dataFrameX[, -1]
+    dataFrameX <- as.data.frame(dataFrameX[, -1])
+    rownames(dataFrameX) <- NULL
+    dataFrameY <- as.data.frame(dataFrameY[, -1])
+    rownames(dataFrameY) <- NULL
   }
   if (!colNames) {
-    dataFrameX <- dataFrameX[-1, ]
+    dataFrameX <- as.data.frame(dataFrameX[-1, ])
+    colnames(dataFrameX) <- NULL
+    dataFrameY <- as.data.frame(dataFrameY[-1, ])
+    colnames(dataFrameY) <- NULL
   }
   diffOfNCol <- ncol(dataFrameX) - ncol(dataFrameY)
   if (diffOfNCol > 0) {
@@ -1777,10 +1783,16 @@ colBind <- function(x, y, rowNames = TRUE, colNames = TRUE, sep = TRUE) {
   dataFrameX <- mergeRowAndColnamesWithData(x)
   dataFrameY <- mergeRowAndColnamesWithData(y)
   if (!rowNames) {
-    dataFrameX <- dataFrameX[, -1]
+    dataFrameX <- as.data.frame(dataFrameX[, -1])
+    rownames(dataFrameX) <- NULL
+    dataFrameY <- as.data.frame(dataFrameY[, -1])
+    rownames(dataFrameY) <- NULL
   }
   if (!colNames) {
-    dataFrameX <- dataFrameX[-1, ]
+    dataFrameX <- as.data.frame(dataFrameX[-1, ])
+    colnames(dataFrameX) <- NULL
+    dataFrameY <- as.data.frame(dataFrameY[-1, ])
+    colnames(dataFrameY) <- NULL
   }
   diffOfNRow <- nrow(dataFrameX) - nrow(dataFrameY)
   if (diffOfNRow > 0) {
