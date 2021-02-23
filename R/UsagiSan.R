@@ -1731,7 +1731,7 @@ mergeRowAndColnamesWithData <- function(x) {
 #' @param y Data.frame type object or vector type object merged with x.
 #' @param rowNames wheter to include rownames of x and y.
 #' @param colNames wheter to include colnames of x and y.
-#' @param sep Whether to separate x and y with a empty column.
+#' @param sep Whether to separate x and y with a empty row.
 #'
 #' @export
 rowBind <- function(x, y, rowNames = TRUE, colNames = TRUE, sep = TRUE) {
@@ -1739,15 +1739,15 @@ rowBind <- function(x, y, rowNames = TRUE, colNames = TRUE, sep = TRUE) {
   dataFrameY <- mergeRowAndColnamesWithData(y)
   if (!rowNames) {
     dataFrameX <- as.data.frame(dataFrameX[, -1])
-    rownames(dataFrameX) <- NULL
+    rownames(dataFrameX) <- seq_len(nrow(dataFrameY))
     dataFrameY <- as.data.frame(dataFrameY[, -1])
-    rownames(dataFrameY) <- NULL
+    rownames(dataFrameY) <- seq_len(nrow(dataFrameY))
   }
   if (!colNames) {
     dataFrameX <- as.data.frame(dataFrameX[-1, ])
-    colnames(dataFrameX) <- NULL
+    colnames(dataFrameX) <- rep("", ncol(dataFrameX))
     dataFrameY <- as.data.frame(dataFrameY[-1, ])
-    colnames(dataFrameY) <- NULL
+    colnames(dataFrameY) <- rep("", ncol(dataFrameY))
   }
   diffOfNCol <- ncol(dataFrameX) - ncol(dataFrameY)
   if (diffOfNCol > 0) {
@@ -1776,7 +1776,7 @@ rowBind <- function(x, y, rowNames = TRUE, colNames = TRUE, sep = TRUE) {
 #' @param y Data.frame type object or vector type object merged with x.
 #' @param rowNames wheter to include rownames of x and y.
 #' @param colNames wheter to include colnames of x and y.
-#' @param sep Whether to separate x and y with a empty row.
+#' @param sep Whether to separate x and y with a empty column.
 #'
 #' @export
 colBind <- function(x, y, rowNames = TRUE, colNames = TRUE, sep = TRUE) {
@@ -1784,15 +1784,15 @@ colBind <- function(x, y, rowNames = TRUE, colNames = TRUE, sep = TRUE) {
   dataFrameY <- mergeRowAndColnamesWithData(y)
   if (!rowNames) {
     dataFrameX <- as.data.frame(dataFrameX[, -1])
-    rownames(dataFrameX) <- NULL
+    rownames(dataFrameX) <- seq_len(nrow(dataFrameX))
     dataFrameY <- as.data.frame(dataFrameY[, -1])
-    rownames(dataFrameY) <- NULL
+    rownames(dataFrameY) <- seq_len(nrow(dataFrameY))
   }
   if (!colNames) {
     dataFrameX <- as.data.frame(dataFrameX[-1, ])
-    colnames(dataFrameX) <- NULL
+    colnames(dataFrameX) <- rep("", ncol(dataFrameX))
     dataFrameY <- as.data.frame(dataFrameY[-1, ])
-    colnames(dataFrameY) <- NULL
+    colnames(dataFrameY) <- rep("", ncol(dataFrameY))
   }
   diffOfNRow <- nrow(dataFrameX) - nrow(dataFrameY)
   if (diffOfNRow > 0) {

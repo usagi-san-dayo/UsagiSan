@@ -16,7 +16,7 @@ rowBind(x, y, rowNames = TRUE, colNames = TRUE, sep = TRUE)
 
 \item{colNames}{wheter to include colnames of x and y.}
 
-\item{sep}{Whether to separate x and y with a empty column.}
+\item{sep}{Whether to separate x and y with a empty row.}
 }
 \description{
 Merging two objects (data.frame, vector) in a vertical direction without adjusting the each number of rows or columns.
