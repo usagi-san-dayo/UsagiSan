@@ -5,14 +5,18 @@
 \alias{rowBind}
 \title{Merging two objects (data.frame, vector) in a vertical direction without adjusting the each number of rows or columns.}
 \usage{
-rowBind(x, y, sep = TRUE)
+rowBind(x, y, rowNames = TRUE, colNames = TRUE, sep = TRUE)
 }
 \arguments{
 \item{x}{Data.frame type object or vector type object you want to merge with y.}
 
 \item{y}{Data.frame type object or vector type object merged with x.}
 
-\item{sep}{Whether you separate x and y with a empty column.}
+\item{rowNames}{wheter to include rownames of x and y.}
+
+\item{colNames}{wheter to include colnames of x and y.}
+
+\item{sep}{Whether to separate x and y with a empty column.}
 }
 \description{
 Merging two objects (data.frame, vector) in a vertical direction without adjusting the each number of rows or columns.

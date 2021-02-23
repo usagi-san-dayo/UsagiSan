@@ -1702,7 +1702,7 @@ mergeRowAndColnamesWithData <- function(x) {
   dataFrame <- as.data.frame(x)
   colnames(dataFrame) <- rep("", ncol(dataFrame))
   rownames(dataFrame) <- seq_len(nrow(dataFrame))
-  for (i in seq_len(length(dataFrame))) {
+  for (i in seq_len(ncol(dataFrame))) {
     if (is.factor(dataFrame[, i])) {
       dataFrame[, i] <- as.character(dataFrame[, i])
     }
@@ -1729,13 +1729,20 @@ mergeRowAndColnamesWithData <- function(x) {
 #'
 #' @param x Data.frame type object or vector type object you want to merge with y.
 #' @param y Data.frame type object or vector type object merged with x.
-#' @param sep Whether you separate x and y with a empty column.
+#' @param rowNames wheter to include rownames of x and y.
+#' @param colNames wheter to include colnames of x and y.
+#' @param sep Whether to separate x and y with a empty column.
 #'
 #' @export
-rowBind <- function(x, y, sep = TRUE) {
+rowBind <- function(x, y, rowNames = TRUE, colNames = TRUE, sep = TRUE) {
   dataFrameX <- mergeRowAndColnamesWithData(x)
   dataFrameY <- mergeRowAndColnamesWithData(y)
-
+  if (!rowNames) {
+    dataFrameX <- dataFrameX[, -1]
+  }
+  if (!colNames) {
+    dataFrameX <- dataFrameX[-1, ]
+  }
   diffOfNCol <- ncol(dataFrameX) - ncol(dataFrameY)
   if (diffOfNCol > 0) {
     dataFrameY <- cbind(dataFrameY, matrix(rep("", nrow(dataFrameY) * abs(diffOfNCol)), nrow = nrow(dataFrameY)))
@@ -1761,13 +1768,20 @@ rowBind <- function(x, y, sep = TRUE) {
 #'
 #' @param x Data.frame type object or vector type object you want to merge with y.
 #' @param y Data.frame type object or vector type object merged with x.
-#' @param sep Whether you separate x and y with a empty row.
+#' @param rowNames wheter to include rownames of x and y.
+#' @param colNames wheter to include colnames of x and y.
+#' @param sep Whether to separate x and y with a empty row.
 #'
 #' @export
-colBind <- function(x, y, sep = TRUE) {
+colBind <- function(x, y, rowNames = TRUE, colNames = TRUE, sep = TRUE) {
   dataFrameX <- mergeRowAndColnamesWithData(x)
   dataFrameY <- mergeRowAndColnamesWithData(y)
-
+  if (!rowNames) {
+    dataFrameX <- dataFrameX[, -1]
+  }
+  if (!colNames) {
+    dataFrameX <- dataFrameX[-1, ]
+  }
   diffOfNRow <- nrow(dataFrameX) - nrow(dataFrameY)
   if (diffOfNRow > 0) {
     emptyDataFrame <- as.data.frame(matrix(rep("", ncol(dataFrameY) * abs(diffOfNRow)), ncol = ncol(dataFrameY)))
