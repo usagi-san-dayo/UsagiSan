@@ -531,13 +531,8 @@ colorCells_xlsx <- function(dataName, fileName, sheetName, coloredCols, coloredC
   wb <- loadWorkbook(paste0(dataName, ".xlsx"))
   data <- as.data.frame(openxlsx::read.xlsx(paste0(dataName, ".xlsx"), sheet = sheetName))
   data <- replace(data, is.na(data), "")
-  st <- openxlsx::createStyle(fontName = fontName, fontSize = fontSize)
-  openxlsx::addStyle(wb, sheetName, style = st, cols = 1:2, rows = 1:2)
-  openxlsx::writeData(wb, sheet = sheetName, x = t(colnames(data)), colNames = F, withFilter = F, startRow = 1, startCol = 1)
-  openxlsx::writeData(wb, sheet = sheetName, x = data, colNames = F, withFilter = F, startRow = 2, startCol = 1)
-  openxlsx::modifyBaseFont(wb, fontSize = fontSize, fontColour = fontColor, fontName = fontName)
   st <- openxlsx::createStyle(fontName = fontName, fontSize = fontSize, fgFill = cellColor)
-  coloredRows <- as.numeric(rownames(data[coloredCondition, ])) + 1
+  coloredRows <- as.numeric(rownames(data[coloredCondition, ]))
   for (i in coloredCols) {
     openxlsx::addStyle(wb, sheetName, style = st, cols = i, rows = coloredRows)
   }
