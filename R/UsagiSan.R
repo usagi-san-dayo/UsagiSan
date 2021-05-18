@@ -2023,7 +2023,7 @@ getSummaryTable <- function(data, namesForRow, nameForCol, digits = 0, locationP
   }
   table <- as.data.frame(matrix(rep(NA, nlevels(data[, nameForCol])), nrow = 1)[numeric(0), ])
   colnames(table) <- rep("", ncol(table))
-  table <- rbind(table, t(c("", paste0(nameForCol, "(n=", length(na.omit(data[, nameForCol])), ")"), rep("", nlevels(data[, nameForCol]) - 1))))
+  table <- rbind(table, t(c("", paste0(nameForCol, " (n=", length(na.omit(data[, nameForCol])), ")"), rep("", nlevels(data[, nameForCol]) - 1))))
   table <- rbind(table, t(c("", paste0(levels(data[, nameForCol]), " (n=", table(na.omit(data[, nameForCol])), ")"))))
   for (nameForRow in namesForRow) {
     if (is.numeric(data[, nameForRow])) {
