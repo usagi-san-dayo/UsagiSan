@@ -1735,7 +1735,7 @@ rowBind <- function(x, y, rowNames = TRUE, colNames = TRUE, sep = TRUE) {
   dataFrameY <- mergeRowAndColnamesWithData(y)
   if (!rowNames) {
     dataFrameX <- as.data.frame(dataFrameX[-1, ])
-    rownames(dataFrameX) <- seq_len(nrow(dataFrameY))
+    rownames(dataFrameX) <- seq_len(nrow(dataFrameX))
     dataFrameY <- as.data.frame(dataFrameY[-1, ])
     rownames(dataFrameY) <- seq_len(nrow(dataFrameY))
   }
