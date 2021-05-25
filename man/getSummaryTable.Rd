@@ -9,7 +9,7 @@ getSummaryTable(
   data,
   namesForRow,
   nameForCol,
-  digits = 0,
+  digits = 2,
   locationPar = "mean",
   sd = FALSE,
   Qu = FALSE,

@@ -2012,14 +2012,18 @@ isEqualData <- function(fileName1, fileName2, fileEncoding1 = "CP932", fileEncod
 #' @importFrom stats sd
 #' @importFrom stats median
 #' @importFrom stats na.omit
+#' @importFrom graphics hist
 #'
 #' @export
-getSummaryTable <- function(data, namesForRow, nameForCol, digits = 0, locationPar = "mean", sd = FALSE, Qu = FALSE, ratio = FALSE) {
+getSummaryTable <- function(data, namesForRow, nameForCol, digits = 2, locationPar = "mean", sd = FALSE, Qu = FALSE, ratio = FALSE) {
   if (length(nameForCol) > 1) {
     stop("The length of the argument nameForCol must be one")
   }
   if (is.null(data)) {
     stop("data is null")
+  }
+  if (!is.factor(data[, nameForCol])) {
+    stop("The type of data[, nameForCol] must be factor")
   }
   table <- as.data.frame(matrix(rep(NA, nlevels(data[, nameForCol])), nrow = 1)[numeric(0), ])
   colnames(table) <- rep("", ncol(table))
@@ -2051,8 +2055,11 @@ getSummaryNumeric <- function(data, nameForRow, nameForCol, digits, locationPar,
     if (locationPar == "mean") {
       cellValue <- sprintf(paste0("%.", digits, "f"), mean(na.omit(data[data[, nameForCol] == colLevel, nameForRow])))
     }
-    else if(locationPar == "median") {
+    else if (locationPar == "median") {
       cellValue <- sprintf(paste0("%.", digits, "f"), median(na.omit(data[data[, nameForCol] == colLevel, nameForRow])))
+    }
+    else if (locationPar == "mode") {
+      cellValue <- mode(na.omit(data[data[, nameForCol] == colLevel, nameForRow]), digits)
     }
     if (sd) {
       cellValue <- paste0(cellValue, " (", sprintf(paste0("%.", digits, "f"), sd(na.omit(data[data[, nameForCol] == colLevel, nameForRow]))), ")")
@@ -2091,4 +2098,22 @@ getSummaryFactor <- function(data, nameForRow, nameForCol, digits, ratio) {
     table <- rbind(table, t(tableRow))
   }
   return(table)
+}
+
+mode <- function(x, digits) {
+  if (length(x) < 30 | length(table(x)) < 7) {
+  tableX <- table(x)
+  mode <- as.numeric(names(tableX[tableX == max(tableX)]))
+  mode <- sprintf(paste0("%.", digits, "f"), mode)
+  }
+  else {
+    histX <- graphics::hist(x, plot = FALSE)$counts
+    names(histX) <- paste0("[", sprintf(paste0("%.", digits, "f"), graphics::hist(x, plot = FALSE)$breaks[seq_len(length(histX))]), ", ",
+                           sprintf(paste0("%.", digits, "f"), graphics::hist(x, plot = FALSE)$breaks[seq(2, length(histX) + 1)]), ")")
+    mode <- names(histX[histX == max(histX)])
+  }
+  if (length(mode) > 1){
+    mode <- NA
+  }
+  return(mode)
 }
