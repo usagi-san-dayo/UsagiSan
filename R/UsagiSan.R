@@ -453,6 +453,7 @@ excelHeadColor <- function(dataName, fileName, header, headerColor = "#92D050", 
     stop("The file-name must be character")
   }
   data <- utils::read.table(paste0(dataName, ".csv"), fill = TRUE, header = FALSE, sep = ",", blank.lines.skip = FALSE, fileEncoding = fileEncoding)
+  data <- replace(data, is.na(data), "")
   wb <- openxlsx::createWorkbook()
   openxlsx::addWorksheet(wb, "Sheet 1")
   st <- openxlsx::createStyle(fontName = fontName, fontSize = fontSize)
