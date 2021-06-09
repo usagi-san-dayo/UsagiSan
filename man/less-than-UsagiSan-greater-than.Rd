@@ -23,6 +23,11 @@ The function excelHeadColor helps you to add colors on headers of any type of ta
 The function colorCells_xlsx colors columns with specified condition for rows in a EXCEL-sheet. This enables to color any EXCEL-sheets overwriting previous workbook data. you can freely intuitively edit EXCEL-sheets.
 }
 
+\section{csvToxlsx}{
+
+The function csvToxlsx converts a csv-file to a Excel-file.
+}
+
 \section{mkDirectories}{
 
 The function mkDirectories organizes files in tha working directory.
@@ -104,6 +109,8 @@ The function getSummarytable Creates a summary table for numeric and factor data
 \code{\link{excelHeadColor}}
 
 \code{\link{excelHeadColor}}
+
+\code{\link{csvToxlsx}}
 
 \code{\link{mkDirectories}}
 

@@ -3,6 +3,7 @@
 export(append_vecOrList)
 export(colBind)
 export(colorCells_xlsx)
+export(csvToxlsx)
 export(dataCleanser)
 export(excelColor)
 export(excelHeadColor)

@@ -12,6 +12,9 @@
 #' @section colorCells_xlsx:
 #' The function colorCells_xlsx colors columns with specified condition for rows in a EXCEL-sheet. This enables to color any EXCEL-sheets overwriting previous workbook data. you can freely intuitively edit EXCEL-sheets.
 #'
+#' @section csvToxlsx:
+#' The function csvToxlsx converts a csv-file to a Excel-file.
+#'
 #' @section mkDirectories:
 #' The function mkDirectories organizes files in tha working directory.
 #'
@@ -60,6 +63,7 @@
 #' @seealso \code{\link{excelColor}}
 #' @seealso \code{\link{excelHeadColor}}
 #' @seealso \code{\link{excelHeadColor}}
+#' @seealso \code{\link{csvToxlsx}}
 #' @seealso \code{\link{mkDirectories}}
 #' @seealso \code{\link{dataCleanser}}
 #' @seealso \code{\linkS4class{dataCleansing}}
@@ -540,6 +544,93 @@ colorCells_xlsx <- function(dataName, fileName, sheetName, coloredCols, coloredC
   }
   openxlsx::saveWorkbook(wb, paste0(fileName, ".xlsx"), overwrite = TRUE)
 }
+#'
+#' Converting a csv file to a xlsx file
+#' @encoding UTF-8
+#'
+#' @param fileName_csv The name of a csv-file.
+#' @param fileName_xlsx The name of a Excel-file.
+#' @param fontSize Font-size.
+#' @param fontName Font-name.
+#' @param fontColor The color of fonts.
+#' @param fileEncoding File-encoding.
+#'
+#' @importFrom stats na.omit
+#' @importFrom utils read.delim
+#' @importFrom openxlsx createWorkbook
+#' @importFrom openxlsx addWorksheet
+#' @importFrom openxlsx createStyle
+#' @importFrom openxlsx writeData
+#' @importFrom openxlsx saveWorkbook
+#'
+#' @export
+csvToxlsx <- function(fileName_csv, fileName_xlsx, fontSize = 11, fontName = "Yu Gothic", fontColor = "#000000", fileEncoding = fileEncoding) {
+  if (!is.character(fileName_csv)) {
+    stop("The data-name must be character")
+  }
+  if (!is.character(fileName_xlsx)) {
+    stop("The file-name must be character")
+  }
+  if (is.null(fileName_xlsx)) {
+    fileName_xlsx <- fileName_csv
+  }
+  data <- utils::read.delim(paste0(fileName_csv, ".csv"), fill = TRUE, header = FALSE, sep = ",", blank.lines.skip = FALSE, fileEncoding = fileEncoding)
+  data <- replace(data, is.na(data), "")
+  wb <- openxlsx::createWorkbook()
+  openxlsx::addWorksheet(wb, "Sheet 1")
+
+  tableRows <- NULL
+  apply(data, 2, function(x) {
+    eachRow <- NULL
+    rowIndices <- unique(c(1, seq_len(length(x))[x == ""], length(x)))
+    for (i in seq_len(length(rowIndices) - 1)) {
+      if (rowIndices[i] == 1 & rowIndices[i + 1] == 2) {
+        eachRow[[length(eachRow) + 1]] <- seq(rowIndices[i], rowIndices[i + 1] - 1)
+      }
+      else if (rowIndices[i + 1] == length(x) & rowIndices[i] == length(x) - 1) {
+        eachRow[[length(eachRow) + 1]] <- seq(rowIndices[i] + 1 , rowIndices[i + 1])
+      }
+      else if (rowIndices[i + 1] - rowIndices[i] != 1) {
+        eachRow[[length(eachRow) + 1]] <- seq(rowIndices[i] + 1 , rowIndices[i + 1] - 1)
+      }
+    }
+    tableRows[[length(tableRows) + 1]] <<- eachRow
+  })
+
+  options(warn = -1)
+  colIndex <- 1
+  lapply(tableRows, function(x) {
+    for (rowIndex in x) {
+      tempData <- data[rowIndex, colIndex]
+      tempData[tempData == ""] <- NA
+      if (length(tempData) > 1) {
+        numerizedData <- NULL
+        if (!any(is.na(as.numeric(stats::na.omit(tempData))))) {
+          if (all(as.numeric(stats::na.omit(tempData)) == as.character(as.numeric(stats::na.omit(tempData))))) {
+            numerizedData <- as.numeric(tempData)
+          }
+          openxlsx::writeData(wb, sheet = "Sheet 1", x = numerizedData, startRow = rowIndex[1], startCol = colIndex, colNames = F, withFilter = F)
+        }
+        else if (!any(is.na(as.numeric(stats::na.omit(tempData[-1]))))) {
+          if (all(as.numeric(stats::na.omit(tempData[-1])) == as.character(as.numeric(stats::na.omit(tempData[-1]))))) {
+            numerizedData <- as.numeric(tempData[-1])
+          }
+          openxlsx::writeData(wb, sheet = "Sheet 1", x = tempData[1], startRow = rowIndex[1], startCol = colIndex, colNames = F, withFilter = F)
+          openxlsx::writeData(wb, sheet = "Sheet 1", x = numerizedData, startRow = rowIndex[2], startCol = colIndex, colNames = F, withFilter = F)
+        }
+        else {
+          openxlsx::writeData(wb, sheet = "Sheet 1", x = tempData, startRow = rowIndex[1], startCol = colIndex, colNames = F, withFilter = F)
+        }
+      }
+      else {
+        openxlsx::writeData(wb, sheet = "Sheet 1", x = tempData, startRow = rowIndex[1], startCol = colIndex, colNames = F, withFilter = F)
+      }
+    }
+    colIndex <<- colIndex + 1
+  })
+  options(warn = 0)
+  openxlsx::saveWorkbook(wb, paste0(fileName_xlsx, ".xlsx"), overwrite = TRUE)
+}
 
 mkDirFor_result_data <- function(parentDirName, childDirName, extension, file) {
   if (is.na(strsplit(file, "\\.")[[1]][2]) & any(is.na(extension))) {
@@ -627,7 +718,7 @@ mkDirectories <- function(parentDirName, dataDirName="data", programmingDirName=
 
 mkNumericTable <- function(data, index) {
   table <- c(index, rep("", 7))
-  table <- rbind(table, c("", "Missing values", "", "Replace the column B with the spesific numbers", "", "Breaks", "", "Labels"))
+  table <- rbind(table, c("", "Missing values", "", "Replace the column B with spesific numbers", "", "Breaks", "", "Labels"))
   options(warn = -1)
   if (length(unique(data[is.na(as.numeric(data[, index])), index])) > 0) {
     numericData <- cbind(rep("", length(unique(data[is.na(as.numeric(data[, index])), index]))),
@@ -1095,9 +1186,9 @@ dataCleanser <- function(dataName, append = FALSE, numOrFac = 10, leastNumOfDate
   files <- list.files()
   if (any(files == paste0("dataCleansingForm_", dataName, "_.xlsx")) == FALSE) {
     data <- as.data.frame(readData(dataName, fileEncoding))
-    tableTime <- c("ColName", "Change the colName")
-    tableNumeric <- c("ColName", "Change the colName", rep("", 6))
-    tableFactor <- c("ColName", "Change the colName", rep("", 7))
+    tableTime <- t(c("ColName", "Change the colName")) #added t() 2021-06-08
+    tableNumeric <- t(c("ColName", "Change the colName", rep("", 6)))
+    tableFactor <- t(c("ColName", "Change the colName", rep("", 7)))
 
     for (i in colnames(data)) {
       table_Time <- mkTimeTable(data, i, tableTime, leastNumOfDate)
@@ -1157,7 +1248,7 @@ setRefClass(
 
     mkNumericTable = function(data, index) {
       table <- c(index, rep("", 7))
-      table <- rbind(table, c("", "Missing values", "", "Replace the column B with the spesific numbers", "", "Breaks", "", "Labels"))
+      table <- rbind(table, c("", "Missing values", "", "Replace the column B with spesific numbers", "", "Breaks", "", "Labels"))
       options(warn = -1)
       if (length(unique(data[is.na(as.numeric(data[, index])), index])) > 0) {
         numericData <- cbind(rep("", length(unique(data[is.na(as.numeric(data[, index])), index]))),
