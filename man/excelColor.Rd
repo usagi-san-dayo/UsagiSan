@@ -48,3 +48,6 @@ excelColor(
 \description{
 Coloring the signigicant variables and corresponding p values in statistical tests tables on a EXCEL sheet.
 }
+\seealso{
+Examples of this function can be found at \url{https://multivariate-statistics.com/2020/07/21/r-programming-excel-coloring/}
+}

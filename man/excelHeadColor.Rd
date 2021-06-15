@@ -39,3 +39,6 @@ excelHeadColor(
 \description{
 Coloring headers of tables on a EXCEL sheet
 }
+\seealso{
+Examples of this function can be found at \url{https://multivariate-statistics.com/2020/07/21/r-programming-excel-coloring/}
+}

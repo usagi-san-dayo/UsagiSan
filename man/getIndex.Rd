@@ -15,3 +15,6 @@ getIndex(x, item)
 \description{
 Getting the indices of some item in a vector or a list.
 }
+\seealso{
+Examples of this function can be found at \url{https://multivariate-statistics.com/2021/01/29/r-programming-vector-list/}
+}

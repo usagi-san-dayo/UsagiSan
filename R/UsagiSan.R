@@ -240,6 +240,8 @@ removeNA <- function(factor_row, adj) {
 #' @importFrom openxlsx modifyBaseFont
 #' @importFrom openxlsx saveWorkbook
 #'
+#' @seealso Examples of this function can be found at \url{https://multivariate-statistics.com/2020/07/21/r-programming-excel-coloring/}
+#'
 #' @export
 #'
 excelColor <- function(dataName, fileName, level = 0.05, pValue = c("Pr(>|z|)", "Pr(>|t|)", "p-value"), significanceColor = "#FFFF00", headerColor = "#92D050", fontSize = 11, fontName = "Yu Gothic", fontColor = "#000000",  intercept = FALSE, adj = TRUE, fileEncoding = "CP932") {
@@ -248,6 +250,9 @@ excelColor <- function(dataName, fileName, level = 0.05, pValue = c("Pr(>|z|)", 
   }
   if (!is.character(fileName)) {
     stop("The file-name must be character")
+  }
+  if (is.na(fileName)) {
+    fileName <- dataName
   }
   data <- utils::read.table(paste0(dataName, ".csv"), fill = TRUE, header = FALSE, sep = ",", blank.lines.skip = FALSE, fileEncoding = fileEncoding)
   data <- replace(data, is.na(data), "")
@@ -447,6 +452,8 @@ writeDatas <- function(factor_list, data, wb) {
 #' @importFrom openxlsx modifyBaseFont
 #' @importFrom openxlsx saveWorkbook
 #'
+#' @seealso Examples of this function can be found at \url{https://multivariate-statistics.com/2020/07/21/r-programming-excel-coloring/}
+#'
 #' @export
 #'
 excelHeadColor <- function(dataName, fileName, header, headerColor = "#92D050", fontSize = 11, fontName = "Yu Gothic", fontColor = "#000000", adj = TRUE, fileEncoding = "CP932") {
@@ -455,6 +462,9 @@ excelHeadColor <- function(dataName, fileName, header, headerColor = "#92D050", 
   }
   if (!is.character(fileName)) {
     stop("The file-name must be character")
+  }
+  if (is.na(fileName)) {
+    fileName <- dataName
   }
   data <- utils::read.table(paste0(dataName, ".csv"), fill = TRUE, header = FALSE, sep = ",", blank.lines.skip = FALSE, fileEncoding = fileEncoding)
   data <- replace(data, is.na(data), "")
@@ -524,6 +534,8 @@ excelHeadColor <- function(dataName, fileName, header, headerColor = "#92D050", 
 #' @importFrom openxlsx modifyBaseFont
 #' @importFrom openxlsx saveWorkbook
 #'
+#' @seealso Examples of this function can be found at \url{https://multivariate-statistics.com/2021/05/14/r-programming-excel-cells-color/}
+#'
 #' @export
 #'
 colorCells_xlsx <- function(dataName, fileName, sheetName, coloredCols, coloredCondition = NULL, cellColor, fontSize = 11, fontName = "Yu Gothic", fontColor = "#000000") {
@@ -532,6 +544,9 @@ colorCells_xlsx <- function(dataName, fileName, sheetName, coloredCols, coloredC
   }
   if (!is.character(fileName)) {
     stop("The file-name must be character")
+  }
+  if (is.na(fileName)) {
+    fileName <- dataName
   }
   wb <- openxlsx::loadWorkbook(paste0(dataName, ".xlsx"))
   openxlsx::modifyBaseFont(wb, fontSize = fontSize, fontColour = fontColor, fontName = fontName)
@@ -666,6 +681,8 @@ mkDir_noArrange_esult_data <- function(parentDirName, childDirName, file) {
 #' @param resultDirName The name of a directory to organize result-files.
 #' @param updateTime The time used to divide data-filese into two directories, one is for datas and the other is for results.
 #' @param arrange Allows you to organize data-files in the form of file extensions.
+#'
+#' @seealso Examples of this function can be found at \url{https://multivariate-statistics.com/2020/08/04/r-programming-auto-arranging-folders/}
 #'
 #' @export
 #'
@@ -1181,6 +1198,9 @@ isCorrectFormat <- function(dateAsFormat) {
 #' @param fileEncoding File-encoding
 #'
 #' @importFrom data.table fread
+#'
+#' @seealso Examples of this function can be found at \url{https://multivariate-statistics.com/2020/09/16/r-programming-auto-data-cleansing/}
+#'
 #' @export
 dataCleanser <- function(dataName, append = FALSE, numOrFac = 10, leastNumOfDate = 10, fileEncoding = "CP932") {
   files <- list.files()
@@ -1821,6 +1841,8 @@ mergeRowAndColnamesWithData <- function(x) {
 #' @param colNames wheter to include colnames of x and y.
 #' @param sep Whether to separate x and y with a empty row.
 #'
+#' @seealso Examples of this function can be found at \url{https://multivariate-statistics.com/2021/02/13/r-programming-rbind-cbind/}
+#'
 #' @export
 rowBind <- function(x, y, rowNames = TRUE, colNames = TRUE, sep = TRUE) {
   dataFrameX <- mergeRowAndColnamesWithData(x)
@@ -1865,6 +1887,8 @@ rowBind <- function(x, y, rowNames = TRUE, colNames = TRUE, sep = TRUE) {
 #' @param rowNames wheter to include rownames of x and y.
 #' @param colNames wheter to include colnames of x and y.
 #' @param sep Whether to separate x and y with a empty column.
+#'
+#' #' @seealso Examples of this function can be found at \url{https://multivariate-statistics.com/2021/02/13/r-programming-rbind-cbind/}
 #'
 #' @export
 colBind <- function(x, y, rowNames = TRUE, colNames = TRUE, sep = TRUE) {
@@ -1911,6 +1935,8 @@ colBind <- function(x, y, rowNames = TRUE, colNames = TRUE, sep = TRUE) {
 #' @param x A vector or list type object.
 #' @param item The item in x indexed.
 #'
+#' @seealso Examples of this function can be found at \url{https://multivariate-statistics.com/2021/01/29/r-programming-vector-list/}
+#'
 #' @export
 getIndex <- function(x, item) {
   if (!is.vector(x)) {
@@ -1937,6 +1963,8 @@ getIndex <- function(x, item) {
 #' @param x A vector or list type object.
 #' @param item A component in x.
 #'
+#' @seealso Examples of this function can be found at \url{https://multivariate-statistics.com/2021/01/29/r-programming-vector-list/}
+#'
 #' @export
 getCount <- function(x, item) {
   return(length(getIndex(x, item)))
@@ -1947,6 +1975,8 @@ getCount <- function(x, item) {
 #'
 #' @param x A vector or list type object.
 #' @param item A vector or list type object appended to x.
+#'
+#' @seealso Examples of this function can be found at \url{https://multivariate-statistics.com/2021/01/29/r-programming-vector-list/}
 #'
 #' @export
 append_vecOrList <- function(x, item) {
@@ -1965,6 +1995,8 @@ append_vecOrList <- function(x, item) {
 #' @param x A vector or list type object.
 #' @param item A vector or list type object merged with x.
 #'
+#' @seealso Examples of this function can be found at \url{https://multivariate-statistics.com/2021/01/29/r-programming-vector-list/}
+#'
 #' @export
 extend_vecOrList <- function(x, item) {
   if (!is.vector(x)) {
@@ -1979,6 +2011,8 @@ extend_vecOrList <- function(x, item) {
 #' @param x A vector or list type object.
 #' @param i The index which an item inserted at.
 #' @param item A vector or list type object merged with x.
+#'
+#' @seealso Examples of this function can be found at \url{https://multivariate-statistics.com/2021/01/29/r-programming-vector-list/}
 #'
 #' @export
 insert_vecOrList <- function(x, i, item) {
@@ -1997,6 +2031,8 @@ insert_vecOrList <- function(x, i, item) {
 #' @param x A vector or list type object.
 #' @param item An item removed from x.
 #'
+#' @seealso Examples of this function can be found at \url{https://multivariate-statistics.com/2021/01/29/r-programming-vector-list/}
+#'
 #' @export
 remove_vecOrList <- function(x, item) {
   indices <- getIndex(x, item)
@@ -2008,6 +2044,8 @@ remove_vecOrList <- function(x, item) {
 #'
 #' @param x A vector or list type object.
 #' @param i The index of a component in x popped.
+#'
+#' @seealso Examples of this function can be found at \url{https://multivariate-statistics.com/2021/01/29/r-programming-vector-list/}
 #'
 #' @export
 pop_vecOrList <- function(x, i) {
@@ -2036,6 +2074,8 @@ pop_vecOrList <- function(x, i) {
 #'
 #' @importFrom utils read.csv
 #' @importFrom utils read.delim
+#'
+#' @seealso Examples of this function can be found at \url{https://multivariate-statistics.com/2021/01/29/r-programming-vector-list/}
 #'
 #' @export
 isEqualData <- function(fileName1, fileName2, fileEncoding1 = "CP932", fileEncoding2 = "CP932") {

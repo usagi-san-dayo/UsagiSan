@@ -24,3 +24,6 @@ isEqualData(
 \description{
 Compare two data in txt, csv or xlsx files.
 }
+\seealso{
+Examples of this function can be found at \url{https://multivariate-statistics.com/2021/01/29/r-programming-vector-list/}
+}

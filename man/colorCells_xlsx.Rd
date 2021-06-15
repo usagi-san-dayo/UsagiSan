@@ -39,3 +39,6 @@ colorCells_xlsx(
 \description{
 Coloring the columns specifying rows conditions
 }
+\seealso{
+Examples of this function can be found at \url{https://multivariate-statistics.com/2021/05/14/r-programming-excel-cells-color/}
+}

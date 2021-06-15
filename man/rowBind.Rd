@@ -21,3 +21,6 @@ rowBind(x, y, rowNames = TRUE, colNames = TRUE, sep = TRUE)
 \description{
 Merging two objects (data.frame, vector) in a vertical direction without adjusting the each number of rows or columns.
 }
+\seealso{
+Examples of this function can be found at \url{https://multivariate-statistics.com/2021/02/13/r-programming-rbind-cbind/}
+}

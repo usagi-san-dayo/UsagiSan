@@ -15,3 +15,6 @@ pop_vecOrList(x, i)
 \description{
 Popping an item from a vector or list type object.
 }
+\seealso{
+Examples of this function can be found at \url{https://multivariate-statistics.com/2021/01/29/r-programming-vector-list/}
+}

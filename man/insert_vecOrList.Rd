@@ -17,3 +17,6 @@ insert_vecOrList(x, i, item)
 \description{
 Inserting an item into a vector or list type object.
 }
+\seealso{
+Examples of this function can be found at \url{https://multivariate-statistics.com/2021/01/29/r-programming-vector-list/}
+}

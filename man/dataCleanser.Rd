@@ -27,3 +27,6 @@ dataCleanser(
 \description{
 Cleansing the dataset on a csv-file to change its form to more arranged one to handle.
 }
+\seealso{
+Examples of this function can be found at \url{https://multivariate-statistics.com/2020/09/16/r-programming-auto-data-cleansing/}
+}

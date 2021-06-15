@@ -30,3 +30,6 @@ mkDirectories(
 \description{
 Making directories to organize three kinds of datas: data-sets,  script-files and result-files
 }
+\seealso{
+Examples of this function can be found at \url{https://multivariate-statistics.com/2020/08/04/r-programming-auto-arranging-folders/}
+}
