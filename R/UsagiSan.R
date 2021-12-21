@@ -251,7 +251,7 @@ excelColor <- function(dataName, fileName, level = 0.05, pValue = c("Pr(>|z|)", 
   if (!is.character(fileName)) {
     stop("The file-name must be character")
   }
-  if (is.na(fileName)) {
+  if (is.null(fileName)) {
     fileName <- dataName
   }
   data <- utils::read.table(paste0(dataName, ".csv"), fill = TRUE, header = FALSE, sep = ",", blank.lines.skip = FALSE, fileEncoding = fileEncoding)
@@ -463,7 +463,7 @@ excelHeadColor <- function(dataName, fileName, header, headerColor = "#92D050", 
   if (!is.character(fileName)) {
     stop("The file-name must be character")
   }
-  if (is.na(fileName)) {
+  if (is.null(fileName)) {
     fileName <- dataName
   }
   data <- utils::read.table(paste0(dataName, ".csv"), fill = TRUE, header = FALSE, sep = ",", blank.lines.skip = FALSE, fileEncoding = fileEncoding)
@@ -545,7 +545,7 @@ colorCells_xlsx <- function(dataName, fileName, sheetName, coloredCols, coloredC
   if (!is.character(fileName)) {
     stop("The file-name must be character")
   }
-  if (is.na(fileName)) {
+  if (is.null(fileName)) {
     fileName <- dataName
   }
   wb <- openxlsx::loadWorkbook(paste0(dataName, ".xlsx"))
